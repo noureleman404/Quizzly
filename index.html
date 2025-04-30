@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quizzly</title>
+    <meta name="description" content="Generate unique tests for every student, eliminate cheating, and save hours of preparation time with our AI-powered platform." />
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="Assets/CSS/main.css">
+    <link rel="stylesheet" href="Assets/CSS/utility.css">
+  </head>
+
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top bg-white shadow-sm">
+      <div class="container">
+        <a class="navbar-brand gradient-text fw-bold" href="#">Quizzly</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#features">Features</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#contact">Get in Touch</a>
+            </li>
+          </ul>
+          <div class="d-flex">
+            <a href="Pages/auth/login.html" class="btn btn-link text-dark">Log in</a>
+            <a href="Pages/auth/signup.html" class="btn gradient-button text-white ms-2">Sign up</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="bg-element bg-element-1"></div>
+      <div class="bg-element bg-element-2"></div>
+      <div class="bg-element bg-element-3"></div>
+      
+      <div class="container">
+        <div class="row justify-content-center text-center">
+          <div class="col-lg-8">
+            <h1 class="display-4 fw-bold mb-4 gradient-text">
+              Revolutionize Classroom Testing with AI
+            </h1>
+            <p class="lead text-secondary mb-5">
+              Generate unique tests for every student, eliminate cheating, and save hours of preparation time with our AI-powered platform.
+            </p>
+            
+            <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 mb-5">
+              <a href="Pages/auth/signup.html" class="btn gradient-button btn-lg px-4 py-3 rounded-pill shadow">
+                Get Started Now
+              </a>
+            </div>
+            
+            <!-- Illustration -->
+            <div class="quiz-illustration">
+              <div class="quiz-card shadow">
+                <div class="row">
+                  <div class="col-md-6 mb-4 mb-md-0">
+                    <div class="quiz-block quiz-block-1">
+                      <div class="quiz-block-line mb-3"></div>
+                      <div class="quiz-block-text mb-2"></div>
+                      <div class="quiz-block-text mb-2"></div>
+                      <div class="quiz-block-text"></div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="quiz-block quiz-block-2">
+                      <div class="quiz-block-line mb-3"></div>
+                      <div class="quiz-block-text mb-2"></div>
+                      <div class="quiz-block-text mb-2"></div>
+                      <div class="quiz-block-text"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Floating Badges -->
+              <div class="floating-badge floating-badge-1">
+                <div class="badge-icon"></div>
+                <span>AI-Powered</span>
+              </div>
+              <div class="floating-badge floating-badge-2">
+                <div class="badge-icon"></div>
+                <span>Unique Tests</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-5">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h2 class="display-5 fw-bold mb-4 gradient-text">
+            Why Choose Quizzly?
+          </h2>
+          <p class="lead text-secondary mx-auto" style="max-width: 700px;">
+            Our platform combines the power of AI with thoughtful design to create a testing experience that benefits both teachers and students.
+          </p>
+        </div>
+
+        <div class="row g-4">
+          <!-- Feature 1 -->
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-light shadow-sm hover-shadow">
+              <div class="card-body">
+                <div class="feature-icon mb-4">🤖</div>
+                <h3 class="card-title h5 fw-bold">AI-Generated Unique Tests</h3>
+                <p class="card-text text-secondary">Create personalized tests for each student based on the same material, making it impossible to share answers.</p>
+                <div class="feature-included">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                    <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                  </svg>
+                  <span>Included in all plans</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-light shadow-sm hover-shadow">
+              <div class="card-body">
+                <div class="feature-icon mb-4">⏱️</div>
+                <h3 class="card-title h5 fw-bold">Time-Saving Automation</h3>
+                <p class="card-text text-secondary">Generate dozens of tests in seconds, saving teachers hours of preparation time.</p>
+                <div class="feature-included">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                    <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                  </svg>
+                  <span>Included in all plans</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-light shadow-sm hover-shadow">
+              <div class="card-body">
+                <div class="feature-icon mb-4">👨‍👩‍👧‍👦</div>
+                <h3 class="card-title h5 fw-bold">Simple Classroom Management</h3>
+                <p class="card-text text-secondary">Create virtual classrooms, add students, and distribute tests all in one place.</p>
+                <div class="feature-included">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                    <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                  </svg>
+                  <span>Included in all plans</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature 4 -->
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-light shadow-sm hover-shadow">
+              <div class="card-body">
+                <div class="feature-icon mb-4">📚</div>
+                <h3 class="card-title h5 fw-bold">Book Source Integration</h3>
+                <p class="card-text text-secondary">Upload textbooks and select specific chapters or sections to generate questions from.</p>
+                <div class="feature-included">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                    <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                  </svg>
+                  <span>Included in all plans</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature 5 -->
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-light shadow-sm hover-shadow">
+              <div class="card-body">
+                <div class="feature-icon mb-4">😊</div>
+                <h3 class="card-title h5 fw-bold">Student-Friendly Interface</h3>
+                <p class="card-text text-secondary">Enjoyable test-taking experience with timers, progress tracking, and instant feedback.</p>
+                <div class="feature-included">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                    <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                  </svg>
+                  <span>Included in all plans</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature 6 -->
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-light shadow-sm hover-shadow">
+              <div class="card-body">
+                <div class="feature-icon mb-4">🔒</div>
+                <h3 class="card-title h5 fw-bold">Secure Testing Environment</h3>
+                <p class="card-text text-secondary">Prevent cheating with randomized questions and answer orders for each student.</p>
+                <div class="feature-included">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                    <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                  </svg>
+                  <span>Included in all plans</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-5">
+      <div class="container">
+        <div class="row">
+          <!-- About Quizzy -->
+          <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+            <h3 class="h5 fw-bold mb-4 gradient-text">Quizzly</h3>
+            <p class="text-muted mb-4">
+              Revolutionizing classroom testing with AI-generated unique tests for every student.
+            </p>
+            <div class="d-flex">
+              <span class="text text-decoration-none"><i class="bi bi-facebook"></i></span>
+              <span class="text text-decoration-none"><i class="bi bi-twitter"></i></span>
+              <span class="text text-decoration-none"><i class="bi bi-instagram"></i></span>
+              <span class="text text-decoration-none"><i class="bi bi-github"></i></span>
+            </div>
+          </div>
+          
+          <!-- Quick Links -->
+          <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+            <h4 class="h6 fw-bold mb-3">Quick Links</h4>
+            <ul class="list-unstyled">
+              <li class="mb-2"><span class="text text-decoration-none">Home</span></li>
+              <li class="mb-2"><span class="text text-decoration-none">Features</span></li>
+              <li class="mb-2"><span class="text text-decoration-none">Pricing</span></li>
+              <li class="mb-2"><span class="text text-decoration-none">About Us</span></li>
+              <li><span class="text text-decoration-none">Blog</span></li>
+            </ul>
+          </div>
+          
+          <!-- For Teachers -->
+          <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+            <h4 class="h6 fw-bold mb-3">For Teachers</h4>
+            <ul class="list-unstyled">
+              <li class="mb-2"><span class="text text-decoration-none">How It Works</span></li>
+              <li class="mb-2"><span class="text text-decoration-none">Classroom Setup</span></li>
+              <li class="mb-2"><span class="text text-decoration-none">Test Creation</span></li>
+              <li class="mb-2"><span class="text text-decoration-none">Testimonials</span></li>
+              <li><span class="text text-decoration-none">FAQ</span></li>
+            </ul>
+          </div>
+          
+          <!-- Legal -->
+          <div class="col-lg-3 col-md-6">
+            <h4 class="h6 fw-bold mb-3">Legal</h4>
+            <ul class="list-unstyled">
+              <li class="mb-2"><span class="text text-decoration-none">Terms of Service</span></li>
+              <li class="mb-2"><span class="text text-decoration-none">Privacy Policy</span></li>
+              <li class="mb-2"><span class="text text-decoration-none">Data Security</span></li>
+              <li><span class="text text-decoration-none">Accessibility</span></li>
+            </ul>
+          </div>
+        </div>
+        
+        <hr class="my-4 bg-secondary">
+        
+        <div class="row align-items-center">
+          <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+            <p class="text-muted small mb-0">
+              &copy; <script>document.write(new Date().getFullYear())</script> Quizzly. All rights reserved.
+            </p>
+          </div>
+          <div class="col-md-6 text-center text-md-end">
+            <span class="text-muted small me-3">Terms</span>
+            <span class="text-muted small me-3">Privacy</span>
+            <span class="text-muted small">Cookies</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="Assets/JS/javaScript.js"></script>
+  </body>
+</html>
