@@ -8,8 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initSmoothScroll();
     initAnimations();
     loadNavigation();
-    displayWelcomeMessage(teacherName);
-
+    showError(input, message);
+    clearError(input);
+    
     // Page-specific initialization
     if (document.getElementById('quiz')) {
         initQuiz();
@@ -125,45 +126,10 @@ function initAnimations() {
     });
 }
 
+
 // =========================
 // Error Handling Functions
 // =========================
-function showError(input, message) {
-    // Getting the form group parent
-    const formGroup = input.closest('.mb-3') || input.closest('.mb-4');
-    if (!formGroup) return;
-    
-    // Finding or creating error element
-    let errorElement = formGroup.querySelector('.error-message');
-    if (!errorElement) {
-        errorElement = document.createElement('div');
-        errorElement.className = 'error-message';
-        formGroup.appendChild(errorElement);
-    }
-    
-    // Set error message and display
-    errorElement.textContent = message;
-    errorElement.style.display = 'block';
-    
-    // Adding invalid class to input
-    input.classList.add('is-invalid');
-}
-
-function clearError(input) {
-    const formGroup = input.closest('.mb-3') || input.closest('.mb-4');
-    if (!formGroup) return;
-    
-    const errorElement = formGroup.querySelector('.error-message');
-    if (errorElement) {
-        errorElement.style.display = 'none';
-    }
-    
-    input.classList.remove('is-invalid');
-}
-
-// ==================
-// Utility Functions
-// ==================
 function showError(input, message) {
     const errorElement = input.nextElementSibling?.classList.contains('error-message') 
         ? input.nextElementSibling 
@@ -188,6 +154,12 @@ function clearError(input) {
     input.classList.remove('is-invalid');
 }
 
+
+// ==================
+// Utility Functions
+// ==================
+
+
 function showLoading(show, buttonId) {
     const button = document.getElementById(buttonId);
     if (!button) return;
@@ -210,10 +182,4 @@ function submitForm(form, endpoint) {
     
     showLoading(true, submitButton.id);
     
-    // Simulate API call
-    setTimeout(() => {
-        showLoading(false, submitButton.id);
-        console.log(`Form would submit to ${endpoint}`);
-        // In real app: form.submit() or fetch API call
-    }, 1500);
 }

@@ -48,49 +48,24 @@
     color: var(--purple);
 }
   
-/* Error states */
-.is-invalid {
-  border-color: #dc3545 !important;
-  background-image: none !important; /* Remove Bootstrap's default icon */
-}
-
-.is-invalid:focus {
-  border-color: #dc3545;
-  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
-}
-
-.error-message {
-  color: #dc3545;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-  display: none;
-}
+/* Enhanced Error States */
+.error-border {
+    border-color: #dc3545 !important;
+    border-width: 1px !important;
+  }
   
-.password-strength-meter {
-    height: 4px;
-    background-color: var(--gray-200);
-    border-radius: 2px;
-    margin-top: 0.5rem;
-    overflow: hidden;
-}
+  .is-invalid {
+    border-color: #dc3545 !important;
+  }
   
-.password-strength-meter .strength-bar {
-    height: 100%;
-    width: 0;
-    transition: width 0.3s ease, background-color 0.3s ease;
-}
+  .is-invalid:focus {
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+  }
   
-.strength-weak {
-    background-color: #dc3545;
-    width: 33%;
-}
+  .error-message {
+    color: #dc3545 !important;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+  }
   
-.strength-medium {
-    background-color: #fd7e14;
-    width: 66%;
-}
-  
-.strength-strong {
-    background-color: #28a745;
-    width: 100%;
-}

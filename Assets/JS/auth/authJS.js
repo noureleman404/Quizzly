@@ -1,231 +1,170 @@
-// =========================
-// Authentication Functions
-// =========================
-function initSignupForm() {
-    const signupForm = document.getElementById('signupForm');
-    if (!signupForm) return;
-
-    const elements = {
-        name: document.getElementById('name'),
-        email: document.getElementById('email'),
-        password: document.getElementById('password'),
-        confirmPassword: document.getElementById('confirmPassword'),
-        role: document.querySelectorAll('input[name="role"]'),
-        terms: document.getElementById('termsCheckbox')
+document.addEventListener('DOMContentLoaded', function() {
+    // DOM Elements
+    const forms = {
+      login: document.getElementById('loginForm'),
+      signup: document.getElementById('signupForm')
     };
-
-    // Real-time validation
-    elements.name?.addEventListener('input', () => validateName(elements.name));
-    elements.email?.addEventListener('input', () => validateEmail(elements.email));
-
-    elements.password?.addEventListener('input', () => {
-        validatePassword(elements.password);
-        updatePasswordStrength(elements.password.value);
-    });
-    elements.confirmPassword?.addEventListener('input', () => 
-        validateConfirmPassword(elements.password, elements.confirmPassword)
-    );
-
-    signupForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const isNameValid = validateName(elements.name);
-        const isEmailValid = validateEmail(elements.email);
-        const isPasswordValid = validatePassword(elements.password);
-        const isConfirmValid = validateConfirmPassword(elements.password, elements.confirmPassword);
-        const isRoleValid = validateRole(elements.role);
-        const isTermsValid = validateTerms(elements.terms);
-
-        if (isNameValid && isEmailValid && isPasswordValid && isConfirmValid && isRoleValid && isTermsValid) {
-            // Prepare data for submission
-            const formData = {
-                name: elements.name.value.trim(),
-                email: elements.email.value.trim(),
-                password: elements.password.value,
-                role: document.querySelector('input[name="role"]:checked').value,
-                terms: elements.terms.checked
-            };
-            
-            console.log('Form data ready for API:', formData);
-            // submitForm(signupForm, '/api/signup', formData);
-        }
-    });
-}
-
-
-function initLoginForm() {
-    const loginForm = document.getElementById('loginForm');
-    if (!loginForm) return;
-
-    const elements = {
-        email: document.getElementById('loginEmail'),
-        password: document.getElementById('loginPassword'),
-        remember: document.getElementById('rememberMe'),
-        button: document.getElementById('loginButtonText'),
-        spinner: document.getElementById('loginSpinner')
+  
+    // Regular expressions for validation
+    const validationPatterns = {
+      email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      password: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/,
+      name: /^[a-zA-Z ]{2,30}$/
     };
-
-    // Real-time validation
-    elements.email?.addEventListener('input', function() {
-        validateEmail(this);
-    });
-
-    elements.password?.addEventListener('input', function() {
-        validateLoginPassword(this);
-    });
-
-    loginForm.addEventListener('submit', function(e) {
+  
+    // Error messages
+    const errorMessages = {
+      required: 'This field is required',
+      email: 'Please enter a valid email address',
+      password: 'Password must be at least 8 characters with at least one letter and one number',
+      name: 'Please enter a valid name (2-30 characters, letters only)',
+      confirmPassword: 'Passwords do not match',
+      terms: 'You must agree to the terms and conditions'
+    };
+  
+    //////////////////////
+    // Utility functions
+    //////////////////////
+  
+    const showError = (element, message) => {
+      element.classList.add('is-invalid');
+      const errorElement = document.getElementById(`${element.id}Error`);
+      if (errorElement) {
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+      }
+    };
+  
+    const hideError = (element) => {
+      element.classList.remove('is-invalid');
+      const errorElement = document.getElementById(`${element.id}Error`);
+      if (errorElement) {
+        errorElement.textContent = '';
+        errorElement.style.display = 'none';
+      }
+    };
+  
+    const validateField = (element, pattern) => {
+      if (!element.value.trim()) {
+        showError(element, errorMessages.required);
+        return false;
+      }
+  
+      if (pattern && !pattern.test(element.value)) {
+        showError(element, errorMessages[pattern.name] || errorMessages.required);
+        return false;
+      }
+  
+      hideError(element);
+      return true;
+    };
+  
+    const setupFormValidation = (form, fields) => {
+      if (!form) return;
+  
+      // Setup real-time validation for each field
+      fields.forEach(field => {
+        const element = document.getElementById(field.id);
+        if (element) {
+          element.addEventListener('input', () => {
+            if (field.type === 'confirmPassword') {
+              const password = document.getElementById('password') || 
+                              document.getElementById('loginPassword');
+              if (element.value !== password.value) {
+                showError(element, errorMessages.confirmPassword);
+              } else {
+                hideError(element);
+              }
+            } else {
+              validateField(element, validationPatterns[field.type]);
+            }
+          });
+        }
+      });
+  
+      form.addEventListener('submit', (e) => {
         e.preventDefault();
-
-        const isEmailValid = validateEmail(elements.email);
-        const isPasswordValid = validateLoginPassword(elements.password);
-
-        if (isEmailValid && isPasswordValid) {
-            // Shows loading state
-            elements.button.textContent = 'Logging in...';
-            elements.spinner.classList.remove('d-none');
-            
-            // Preparing data for submission
-            const formData = {
-                email: elements.email.value.trim(),
-                password: elements.password.value,
-                remember: elements.remember.checked
-            };
-            
-            console.log('Login data ready for API:', formData);
-            // submitForm(loginForm, '/api/login', formData);
-            
+        let isValid = true;
+  
+        // Validate all fields
+        fields.forEach(field => {
+          const element = document.getElementById(field.id);
+          if (element) {
+            if (field.type === 'confirmPassword') {
+              const password = document.getElementById('password') || 
+                              document.getElementById('loginPassword');
+              if (element.value !== password.value) {
+                showError(element, errorMessages.confirmPassword);
+                isValid = false;
+              }
+            } else if (!validateField(element, validationPatterns[field.type])) {
+              isValid = false;
+            }
+          }
+        });
+  
+        // Special case for terms checkbox (signup only)
+        if (form === forms.signup) {
+          const termsCheckbox = document.getElementById('termsCheckbox');
+          if (!termsCheckbox.checked) {
+            const termsError = document.getElementById('termsError');
+            termsError.textContent = errorMessages.terms;
+            termsError.style.display = 'block';
+            isValid = false;
+          }
         }
-    });
-}
-
-function showGeneralError(message) {
-    const errorElement = document.createElement('div');
-    errorElement.className = 'alert alert-danger mt-3';
-    errorElement.textContent = message;
-    
-    const form = document.getElementById('loginForm');
-    const submitButton = form.querySelector('button[type="submit"]');
-    form.insertBefore(errorElement, submitButton.nextSibling);
-    
-    // Removing errors after 5 seconds
-    setTimeout(() => {
-        errorElement.remove();
-    }, 5000);
-}
-
-// ======================
-// Validation Functions
-// ======================
-
-function validateName(input) {
-    const value = input.value.trim();
-    const regex = /^[a-zA-Z\s'-]+$/;
-    
-    if (!value) {
-        showError(input, 'Full name is required');
-        return false;
-    } else if (!regex.test(value)) {
-        showError(input, 'Please enter a valid name');
-        return false;
-    } else {
-        clearError(input);
-        return true;
-    }
-}
-
-
-function validateEmail(input) {
-    const value = input.value.trim();
-    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    
-    if (!value) {
-        showError(input, 'Email is required');
-        return false;
-    } else if (!regex.test(value)) {
-        showError(input, 'Please enter a valid email');
-        return false;
-    } else {
-        clearError(input);
-        return true;
-    }
-}
-
-function validatePassword(input) {
-    const value = input.value;
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    
-    if (!value) {
-        showError(input, 'Password is required');
-        return false;
-    } else if (value.length < 8) {
-        showError(input, 'Minimum 8 characters');
-        return false;
-    } else if (!regex.test(value)) {
-        showError(input, 'Requires uppercase, lowercase, number, and special character');
-        return false;
-    } else {
-        clearError(input);
-        updatePasswordStrength(value);
-        return true;
-    }
-}
-
-function validateLoginPassword(input) {
-    const value = input.value;
-    
-    if (!value) {
-        showError(input, 'Password is required');
-        return false;
-    } else {
-        clearError(input);
-        return true;
-    }
-}
-
-function validateConfirmPassword(passwordInput, confirmInput) {
-    const password = passwordInput.value;
-    const confirm = confirmInput.value;
-    
-    if (!confirm) {
-        showError(confirmInput, 'Please confirm your password');
-        return false;
-    } else if (password !== confirm) {
-        showError(confirmInput, 'Passwords do not match');
-        return false;
-    } else {
-        clearError(confirmInput);
-        return true;
-    }
-}
-
-function validateRole(inputs) {
-    const selected = Array.from(inputs).some(radio => radio.checked);
-    const errorElement = document.getElementById('roleError');
-    
-    if (!selected) {
-        if (errorElement) {
-            errorElement.textContent = 'Please select your role';
-            errorElement.style.display = 'block';
+  
+        if (isValid) {
+          handleFormSubmission(form);
         }
-        return false;
-    } else {
-        if (errorElement) errorElement.style.display = 'none';
-        return true;
-    }
-}
-
-function validateTerms(checkbox) {
-    const errorElement = document.getElementById('termsError');
-    
-    if (!checkbox.checked) {
-        if (errorElement) {
-            errorElement.textContent = 'You must accept the terms';
-            errorElement.style.display = 'block';
+      });
+    };
+  
+    const handleFormSubmission = (form) => {
+      const submitButton = form.querySelector('button[type="submit"]');
+      const defaultText = submitButton.dataset.defaultText || submitButton.textContent;
+      
+      // Show loading state
+      submitButton.disabled = true;
+      submitButton.innerHTML = `
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        ${form === forms.login ? 'Logging in...' : 'Creating account...'}
+      `;
+  
+      // Prepare form data
+      const formData = {};
+      const inputs = form.querySelectorAll('input');
+      inputs.forEach(input => {
+        if (input.type !== 'checkbox' && input.type !== 'radio') {
+          formData[input.id] = input.value;
+        } else if (input.checked) {
+          formData[input.name || input.id] = input.value;
         }
-        return false;
-    } else {
-        if (errorElement) errorElement.style.display = 'none';
-        return true;
+      });
+  
+      console.log(`${form === forms.login ? 'Login' : 'Signup'} form data:`, formData);
+  
+    };
+  
+    //////////////////////
+    // Initialize forms
+    //////////////////////
+  
+    // Login form configuration
+    if (forms.login) {
+      setupFormValidation(forms.login, [
+        { id: 'loginEmail', type: 'email' },
+        { id: 'loginPassword', type: 'password' }
+      ]);
     }
-}
+  
+    // Signup form configuration
+    if (forms.signup) {
+      setupFormValidation(forms.signup, [
+        { id: 'name', type: 'name' },
+        { id: 'email', type: 'email' },
+        { id: 'password', type: 'password' },
+        { id: 'confirmPassword', type: 'confirmPassword' }
+      ]);
+    }
+  });

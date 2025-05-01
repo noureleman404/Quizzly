@@ -1,0 +1,133 @@
+
+.dashboard-container {
+  padding: 2rem 0;
+}
+
+.logged-in .logged-out-buttons,
+.logged-out .user-info {
+  display: none !important;
+}
+
+.stats-card {
+  border-left: 4px solid var(--purple);
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+  transition: transform 0.2s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-3px);
+}
+
+.stats-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.stats-card p {
+  color: var(--gray-500);
+  margin-bottom: 0;
+}
+
+.dashboard-tab {
+  padding: 1rem 1.5rem;
+  font-weight: 500;
+  color: var(--gray-600);
+  border: none;
+  background: none;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dashboard-tab:hover {
+  color: var(--purple);
+}
+
+.dashboard-tab.active {
+  color: var(--purple);
+  border-bottom: 2px solid var(--purple);
+}  
+
+.dashboard-content {
+  padding: 1.5rem 0;
+  display: none;
+}
+
+.dashboard-content.active {
+  display: block;
+}
+
+.classroom-card {
+  background: white;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.classroom-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.classroom-card .card-header {
+  background: linear-gradient(135deg, var(--purple), var(--primary-blue));
+  color: white;
+  padding: 1rem;
+  font-weight: 600;
+}
+
+.classroom-card .card-body {
+  padding: 1.25rem;
+}
+
+.classroom-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+
+.classroom-card .badge {
+  background-color: rgba(139, 92, 246, 0.1);
+  color: var(--purple);
+  font-weight: 500;
+}
+
+.card-border-dashed {
+  border: 2px dashed var(--gray-300);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.card-border-dashed:hover {
+  border-color: var(--purple);
+  background-color: rgba(139, 92, 246, 0.05);
+}
+
+#file-upload-area {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#file-upload-area:hover {
+  border-color: var(--purple);
+  background-color: rgba(139, 92, 246, 0.05);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-tab {
+      padding: 0.75rem;
+      font-size: 0.9rem;
+  }
+  
+  .stats-card {
+      padding: 1rem;
+  }
+  
+  .classroom-card {
+      margin-bottom: 1rem;
+  }
+}
