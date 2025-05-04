@@ -65,29 +65,22 @@ const joinClassBtn = document.getElementById('joinClassBtn');
 
 // Initialize the dashboard
 document.addEventListener('DOMContentLoaded', function() {
-    // Update dashboard header with student name
     document.getElementById('studentName').textContent = studentData.name;
+
+    dashboardTabs.forEach(tab => {
+        tab.addEventListener('click', switchTab);
+    });
+    logoutButton.addEventListener('click', handleLogout);
+    joinClassBtn.addEventListener('click', handleJoinClass);
     
-    // Update stats counts
+    // populate data
     updateDashboardStats();
-    
-    // Populate dashboard content
     populateUpcomingQuizzes();
     populateCompletedQuizzes();
     populateClasses();
     
-    // Add event listeners for tabs
-    dashboardTabs.forEach(tab => {
-        tab.addEventListener('click', switchTab);
-    });
-    
-    // Add event listener for logout button
-    logoutButton.addEventListener('click', handleLogout);
-    
-    // Add event listener for join class button
-    joinClassBtn.addEventListener('click', handleJoinClass);
-    
-
+    // activate default tab
+    document.querySelector('.dashboard-tab.active').click();
 });
 
 
@@ -108,13 +101,9 @@ function switchTab() {
     });
     this.classList.add('active');
     
-    // Show corresponding content
+    // Show (corresponding) content
     dashboardContents.forEach(content => {
-        if (content.getAttribute('data-content') === tabId) {
-            content.classList.remove('d-none');
-        } else {
-            content.classList.add('d-none');
-        }
+        content.classList.toggle('d-none', content.getAttribute('data-content') !== tabId);
     });
 }
 
@@ -127,7 +116,7 @@ function populateUpcomingQuizzes() {
         upcomingQuizzesList.removeChild(upcomingQuizzesList.firstChild);
     }
     
-    // Show empty state if no quizzes
+    // Show empty state if no quizzes exist
     if (studentData.upcomingQuizzes.length === 0) {
         const emptyStateDiv = document.createElement('div');
         emptyStateDiv.className = 'col-12 text-center py-5';
@@ -206,7 +195,7 @@ function populateCompletedQuizzes() {
             <td>${quiz.score}</td>
             <td><span class="badge bg-success">${quiz.grade}</span></td>
             <td>
-                <button class="btn btn-sm btn-outline-primary">Review</button>
+                <button class="gradient-button-small">Review</button>
             </td>
         `;
         
@@ -218,56 +207,48 @@ function populateCompletedQuizzes() {
 function populateClasses() {
     const classesList = document.getElementById('classesList');
     const noClasses = document.getElementById('noClasses');
-    const joinClassCard = classesList.querySelector('.card.border-dashed').parentNode;
+    const joinClassCard = classesList.querySelector('.join-class-card');
     
-    // Remove all children except the join class card
-    while (classesList.firstChild) {
-        if (classesList.firstChild !== joinClassCard) {
-            classesList.removeChild(classesList.firstChild);
-        } else {
-            break;
-        }
-    }
+    // Clear previous classes (keep join class card)
+    classesList.querySelectorAll('.col-md-4:not(.join-class-card)').forEach(el => el.remove());
     
-    // Show empty state if no classes
     if (studentData.enrolledClasses.length === 0) {
         noClasses.classList.remove('d-none');
-        return;
+        return; 
     }
     
-    // Hide empty state
     noClasses.classList.add('d-none');
     
-    // Populate classes
     studentData.enrolledClasses.forEach(classItem => {
         const classCard = document.createElement('div');
         classCard.className = 'col-md-4 mb-4';
         
-        // Get class initials
         const initials = classItem.name.split(' ')
-            .map(word => word[0])
+            .filter(word => word.length > 0) // to ensure we don't get undefined
+            .map(word => word[0].toUpperCase())
             .join('');
         
         classCard.innerHTML = `
-            <div class="card">
+            <div class="card h-100">
                 <div class="bg-gradient text-white p-4 text-center h5 mb-0">
-                    ${initials}
+                    ${initials || '?'} <!-- Fallback if no initials -->
                 </div>
                 <div class="card-body">
-                    <h3 class="h6 mb-2">${classItem.name}</h3>
-                    <p class="text-muted small mb-3">Teacher: ${classItem.teacher}</p>
-                    <p class="text-muted small mb-3">${classItem.studentsCount} Students</p>
+                    <h3 class="h6 mb-2">${classItem.name || 'Unnamed Class'}</h3>
+                    <p class="text-muted small mb-3">Teacher: ${classItem.teacher || 'Unknown'}</p>
+                    <p class="text-muted small mb-3">Students: ${classItem.studentsCount || 0}</p>
                     <button class="btn btn-outline-primary w-100">Class Details</button>
                 </div>
             </div>
         `;
         
-        // Insert before join class card
         classesList.insertBefore(classCard, joinClassCard);
     });
 }
+        
 
-// Handle join class button click
+
+// Handling join class button click
 function handleJoinClass() {
     const classCode = document.getElementById('classCode').value;
     
@@ -276,7 +257,7 @@ function handleJoinClass() {
         return;
     }
     
-    // Simulate joining class (In a real app, this would call an API)
+    // Simulate joining class 
     // For demo purpose, we'll add a fake class
     const newClass = {
         id: Date.now(),
@@ -300,7 +281,6 @@ function handleJoinClass() {
 
 // Handle logout button click
 function handleLogout() {
-    // In a real app, this would clear session/tokens
     // For demo purpose, redirect to index page
-    window.location.href = 'index.html';
+    window.location.href = '../../../index.html';
 }

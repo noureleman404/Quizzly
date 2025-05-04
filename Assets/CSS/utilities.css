@@ -28,6 +28,19 @@
     opacity: 0.9;
   }
   
+  .gradient-button-small {
+    background: linear-gradient(to right, var(--purple), var(--pink));
+    border: none;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    transition: opacity 0.3s;
+  }
+
+  .gradient-button-small {
+    opacity: 1.0;
+  }
+
   .hover-shadow {
     transition: all 0.3s ease;
   }
@@ -40,7 +53,7 @@
   .bg-gradient {
     background: linear-gradient(to right, var(--purple), var(--pink));
   }
-  
+
   /* Card Styles */
   .card {
     border: none;

@@ -56,7 +56,7 @@
         <!-- Quick Stats -->
         <div class="row mb-4">
             <div class="col-md-4">
-                <div class="stats-card shadow-sm">
+                <div class="stats-card shadow-sm" id="Upcoming-Quizzes-State" style="border-left-color: var(--purple);">
                     <div class="d-flex align-items-center">
                         <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3 d-flex align-items-center justify-content-center" style="width: 3rem; height: 3rem;">
                             <i class="bi bi-calendar text-primary"></i>
@@ -69,7 +69,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="stats-card shadow-sm" style="border-left-color: var(--primary-pink);">
+                <div class="stats-card shadow-sm" id="Enrolled-Classes-State" style="border-left-color: var(--primary-pink);">
                     <div class="d-flex align-items-center">
                         <div class="rounded-circle bg-danger bg-opacity-10 p-3 me-3 d-flex align-items-center justify-content-center" style="width: 3rem; height: 3rem;">
                             <i class="bi bi-book text-danger"></i>
@@ -82,7 +82,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="stats-card shadow-sm" style="border-left-color: var(--primary-blue);">
+                <div class="stats-card shadow-sm" id="Completed-Quizzes-State" style="border-left-color: var(--primary-blue);">
                     <div class="d-flex align-items-center">
                         <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3 d-flex align-items-center justify-content-center" style="width: 3rem; height: 3rem;">
                             <i class="bi bi-check-circle text-info"></i>
@@ -160,11 +160,11 @@
                         <!-- Classes will be here by JS -->
                         
                         <!-- Join Class Card -->
-                        <div class="col-md-4 mb-4">
-                            <div class="card border-dashed h-100">
+                        <div class="col-md-4 mb-4 join-class-card">
+                            <div class="card border-dashed h-100" >
                                 <div class="card-body text-center d-flex align-items-center justify-content-center">
                                     <div>
-                                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 mx-auto mb-3 " style="width: fit-content;">
+                                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 mx-auto mb-3 d-flex align-items-center justify-content-center " style="width: 3rem; height: 3rem;">
                                             <i class="bi bi-plus-lg text-primary"></i>
                                         </div>
                                         <h3 class="h6">Join Class</h3>
@@ -191,6 +191,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../Assets/JS/dashboards/Student-dash.js"></script>
+    <script src="../../Assets/JS/dashboards/StudentDashJS.js"></script>
 </body>
 </html>
