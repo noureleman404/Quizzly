@@ -39,10 +39,9 @@ const logoutButton = document.getElementById('logoutButton');
 let createClassroomModal;
 let manageClassroomModal;
 
-// Current selected classroom for management
 let currentClassroom = null;
 
-// Initialize the dashboard
+// dashboard initialization
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize Bootstrap modals
     createClassroomModal = new bootstrap.Modal(document.getElementById('createClassroomModal'));
@@ -134,13 +133,13 @@ function updateDashboardStats() {
     document.getElementById('upcomingQuizzesCount').textContent = teacherData.upcomingQuizzes.length;
 }
 
-// Switch between dashboard tabs
+// Switching between dashboard tabs
 function switchTab() {
     const tabId = this.getAttribute('data-tab');
     switchToTab(tabId);
 }
 
-// Switch to a specific tab by ID
+// Switch to a specific tab
 function switchToTab(tabId) {
     // Update active tab
     dashboardTabs.forEach(tab => {
@@ -167,7 +166,7 @@ function populateClassrooms() {
     const noClassrooms = document.getElementById('noClassrooms');
     const createClassroomCard = classroomsList.querySelector('.card.border-dashed').parentNode;
     
-    // Remove all children except the create classroom card
+    // Remove all children except (create classroom) card
     while (classroomsList.firstChild) {
         if (classroomsList.firstChild !== createClassroomCard) {
             classroomsList.removeChild(classroomsList.firstChild);
@@ -536,7 +535,7 @@ function handleGenerateQuiz() {
     selectedFileName.classList.add('d-none');
     
     // Show success message
-    alert('Quiz created successfully! In a real application, the quiz would now be generated based on the uploaded content.');
+    alert('Quiz created successfully!');
 }
 
 // Handle copy class code
@@ -576,7 +575,6 @@ function handleRegenerateClassCode() {
 function handleAddStudent() {
     if (!currentClassroom) return;
     
-    // In a real app, this would show a form or search interface
     // For demo purpose, we'll add a fake student
     const newStudent = {
         id: Date.now(),
@@ -626,7 +624,7 @@ function removeStudent(classroomId, studentId) {
     // Update dashboard stats
     updateDashboardStats();
 }
-
+ 
 // Edit quiz
 function editQuiz(quizId) {
     // Find the quiz
@@ -653,8 +651,8 @@ function viewQuiz(quizId) {
     const quiz = teacherData.upcomingQuizzes.find(q => q.id === quizId);
     if (!quiz) return;
     
-    // In a real app, this would navigate to a quiz details page
-    alert(`Viewing quiz: ${quiz.title}\n\nIn a real application, this would open a detailed view of the quiz.`);
+    // this would navigate to a quiz details page (but for now it is an alert)
+    alert(`Viewing quiz: ${quiz.title}\n\n`);
 }
 
 // Generate random class code
@@ -673,5 +671,5 @@ function generateClassCode() {
 function handleLogout() {
     // In a real app, this would clear session/tokens
     // For demo purpose, redirect to index page
-    window.location.href = 'index.html';
+    window.location.href = '../../../index.html';
 }

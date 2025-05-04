@@ -19,6 +19,18 @@
   border-left: 4px solid var(--blue) !important;
 }
 
+#TS-state{
+  border-left: 4px solid var(--purple);
+}
+
+#Classroom-state{
+  border-left: 4px solid var(--pink);
+}
+
+#UQ-state{
+  border-left: 4px solid var(--blue);
+}
+
 .stats-card {
   background: white;
   padding: 1.5rem;
