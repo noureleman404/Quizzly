@@ -8,8 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initSmoothScroll();
     initAnimations();
     loadNavigation();
-    showError(input, message);
-    clearError(input);
     
     // Page-specific initialization
     if (document.getElementById('quiz')) {
@@ -183,3 +181,186 @@ function submitForm(form, endpoint) {
     showLoading(true, submitButton.id);
     
 }
+
+// Utility Functions
+function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
+  
+  // Navbar Scroll Effect
+  document.addEventListener('DOMContentLoaded', function() {
+    const navbar = document.querySelector('.navbar');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 50) {
+        navbar.classList.add('shadow');
+      } else {
+        navbar.classList.remove('shadow');
+      }
+    });
+  
+    // Team cards hover effect
+    const teamCards = document.querySelectorAll('.team-card');
+    if (teamCards.length > 0) {
+      teamCards.forEach(card => {
+        card.addEventListener('mousemove', function(e) {
+          const cardRect = card.getBoundingClientRect();
+          const x = e.clientX - cardRect.left; 
+          const y = e.clientY - cardRect.top;
+          
+          const centerX = cardRect.width / 2;
+          const centerY = cardRect.height / 2;
+          
+          const rotateY = (x - centerX) / 20;
+          const rotateX = (centerY - y) / 20;
+          
+          const memberCard = card.querySelector('.team-member-card');
+          memberCard.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+        
+        card.addEventListener('mouseleave', function() {
+          const memberCard = card.querySelector('.team-member-card');
+          memberCard.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+        });
+      });
+    }
+  
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+        
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          const navbarHeight = document.querySelector('.navbar').offsetHeight;
+          const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navbarHeight;
+          
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  });
+  
+  // Quiz Functions
+  let currentQuestion = 0;
+  let timeLeft = 3600; // 60 minutes in seconds
+  let selectedAnswers = {};
+  let quizTimer;
+  
+  function initializeQuiz() {
+    const quizElement = document.getElementById('quiz');
+    if (!quizElement) return;
+  
+    updateQuestionDisplay();
+    startTimer();
+  
+    // Add event listeners for navigation buttons
+    document.getElementById('prevButton')?.addEventListener('click', previousQuestion);
+    document.getElementById('nextButton')?.addEventListener('click', nextQuestion);
+    document.getElementById('submitQuiz')?.addEventListener('click', submitQuiz);
+  }
+  
+  function updateQuestionDisplay() {
+    const questionElement = document.getElementById('currentQuestion');
+    if (!questionElement) return;
+  
+    // Update question number and progress bar
+    const progressBar = document.querySelector('.progress-bar');
+    if (progressBar) {
+      progressBar.style.width = `${((currentQuestion + 1) / totalQuestions) * 100}%`;
+    }
+  
+    // Update question navigation bubbles
+    updateQuestionBubbles();
+  }
+  
+  function startTimer() {
+    quizTimer = setInterval(() => {
+      timeLeft--;
+      const timerDisplay = document.getElementById('timer');
+      if (timerDisplay) {
+        timerDisplay.textContent = formatTime(timeLeft);
+        if (timeLeft < 300) { // Less than 5 minutes
+          timerDisplay.classList.add('text-danger');
+        }
+      }
+      if (timeLeft <= 0) {
+        clearInterval(quizTimer);
+        submitQuiz();
+      }
+    }, 1000);
+  }
+  
+  function selectAnswer(questionIndex, answerIndex) {
+    selectedAnswers[questionIndex] = answerIndex;
+    
+    // Update UI to show selected answer
+    document.querySelectorAll(`.question-${questionIndex} .quiz-option`).forEach((option, index) => {
+      if (index === answerIndex) {
+        option.classList.add('selected');
+      } else {
+        option.classList.remove('selected');
+      }
+    });
+  }
+  
+  function submitQuiz() {
+    clearInterval(quizTimer);
+    // In a real app, this would submit to a server
+    alert('Quiz submitted successfully!');
+  }
+  
+  // Dashboard Functions
+  function initializeDashboard() {
+    const dashboardElement = document.getElementById('dashboard');
+    if (!dashboardElement) return;
+  
+    // Add event listeners for dashboard tabs
+    document.querySelectorAll('.dashboard-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        const tabId = this.getAttribute('data-tab');
+        switchDashboardTab(tabId);
+      });
+    });
+  }
+  
+  function switchDashboardTab(tabId) {
+    // Update active tab
+    document.querySelectorAll('.dashboard-tab').forEach(tab => {
+      if (tab.getAttribute('data-tab') === tabId) {
+        tab.classList.add('active');
+      } else {
+        tab.classList.remove('active');
+      }
+    });
+  
+    // Show corresponding content
+    document.querySelectorAll('.dashboard-content').forEach(content => {
+      if (content.getAttribute('data-content') === tabId) {
+        content.classList.remove('d-none');
+      } else {
+        content.classList.add('d-none');
+      }
+    });
+  }
+  
+  // Initialize appropriate functionality based on page
+  document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('quiz')) {
+      initializeQuiz();
+    } else if (document.getElementById('dashboard')) {
+      initializeDashboard();
+    }
+  });
