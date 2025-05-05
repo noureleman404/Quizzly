@@ -27,7 +27,13 @@ let teacherData = {
         3: [
             { id: 106, name: 'Jessica Taylor', email: 'jessica@example.com' }
         ]
-    }
+    },
+    // New: Add uploaded books data
+    uploadedBooks: [
+        { id: 1, title: 'Introduction to Biology', author: 'Jane Smith', subject: 'Biology', pages: 458, uploadDate: '2025-04-15' },
+        { id: 2, title: 'Advanced Chemistry Concepts', author: 'Robert Johnson', subject: 'Chemistry', pages: 612, uploadDate: '2025-04-20' },
+        { id: 3, title: 'Physics Fundamentals', author: 'Alan Cooper', subject: 'Physics', pages: 524, uploadDate: '2025-04-25' }
+    ]
 };
 
 // DOM elements
@@ -39,9 +45,10 @@ const logoutButton = document.getElementById('logoutButton');
 let createClassroomModal;
 let manageClassroomModal;
 
+// Current selected classroom for management
 let currentClassroom = null;
 
-// dashboard initialization
+// Initialize the dashboard
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize Bootstrap modals
     createClassroomModal = new bootstrap.Modal(document.getElementById('createClassroomModal'));
@@ -50,13 +57,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update dashboard header with teacher name
     document.getElementById('teacherName').textContent = teacherData.name;
     
-    // Update stats counts
-    updateDashboardStats();
     
     // Populate dashboard content
     populateClassrooms();
     populateUpcomingQuizzes();
     populateQuizClassroomSelect();
+    populateBookSelect();
+    populateUploadedBooks();
     
     // Add event listeners for tabs
     dashboardTabs.forEach(tab => {
@@ -68,10 +75,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add event listeners for classroom actions
     document.getElementById('newClassroomBtn').addEventListener('click', showCreateClassroomModal);
-    document.getElementById('saveClassroomBtn').addEventListener('click', handleCreateClassroom);
-    document.getElementById('saveClassroomChangesBtn').addEventListener('click', handleSaveClassroomChanges);
     
-    // Add event listeners for file upload
+    // Add event listeners for file upload in upload book tab
     const fileInput = document.getElementById('fileInput');
     const uploadArea = document.getElementById('uploadArea');
     
@@ -106,20 +111,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners for quiz generation
     document.getElementById('generateQuizBtn').addEventListener('click', handleGenerateQuiz);
     
-    // Add event listener for copy class code button
-    document.getElementById('copyCodeBtn').addEventListener('click', handleCopyClassCode);
-    
-    // Add event listener for regenerate class code button
-    document.getElementById('regenerateCodeBtn').addEventListener('click', handleRegenerateClassCode);
-    
     // Add event listener for scheduling quiz button
     document.getElementById('scheduleQuizBtn').addEventListener('click', () => {
         // Switch to create test tab
         switchToTab('create');
     });
     
-    // Add event listener for adding a student
-    document.getElementById('addStudentBtn').addEventListener('click', handleAddStudent);
+    // Add event listener for upload book button
+    document.getElementById('uploadBookBtn').addEventListener('click', handleUploadBook);
 });
 
 // Update dashboard statistics
@@ -130,16 +129,18 @@ function updateDashboardStats() {
     
     document.getElementById('totalStudentsCount').textContent = totalStudents;
     document.getElementById('classroomsCount').textContent = teacherData.classrooms.length;
-    document.getElementById('upcomingQuizzesCount').textContent = teacherData.upcomingQuizzes.length;
+    
+    // Update uploaded books count instead of upcoming quizzes
+    document.getElementById('uploadedBooksCount').textContent = teacherData.uploadedBooks.length;
 }
 
-// Switching between dashboard tabs
+// Switch between dashboard tabs
 function switchTab() {
     const tabId = this.getAttribute('data-tab');
     switchToTab(tabId);
 }
 
-// Switch to a specific tab
+// Switch to a specific tab by ID
 function switchToTab(tabId) {
     // Update active tab
     dashboardTabs.forEach(tab => {
@@ -166,7 +167,7 @@ function populateClassrooms() {
     const noClassrooms = document.getElementById('noClassrooms');
     const createClassroomCard = classroomsList.querySelector('.card.border-dashed').parentNode;
     
-    // Remove all children except (create classroom) card
+    // Remove all children except the create classroom card
     while (classroomsList.firstChild) {
         if (classroomsList.firstChild !== createClassroomCard) {
             classroomsList.removeChild(classroomsList.firstChild);
@@ -195,7 +196,7 @@ function populateClassrooms() {
             .join('');
         
         classroomCard.innerHTML = `
-            <div class="card">
+            <div class="card" id= "classrooms-card">
                 <div class="bg-gradient text-white p-4 text-center h5 mb-0">
                     ${initials}
                 </div>
@@ -305,6 +306,83 @@ function populateQuizClassroomSelect() {
         option.value = classroom.id;
         option.textContent = classroom.name;
         quizClassroomSelect.appendChild(option);
+    });
+}
+
+// Populate book select in create quiz form
+function populateBookSelect() {
+    const quizBookSelect = document.getElementById('quizBook');
+    
+    // Clear existing options except the default
+    while (quizBookSelect.options.length > 1) {
+        quizBookSelect.remove(1);
+    }
+    
+    // Add options for each book
+    teacherData.uploadedBooks.forEach(book => {
+        const option = document.createElement('option');
+        option.value = book.id;
+        option.textContent = book.title;
+        quizBookSelect.appendChild(option);
+    });
+}
+
+// Populate uploaded books list
+function populateUploadedBooks() {
+    const uploadedBooksList = document.getElementById('uploadedBooksList');
+    const noUploadedBooks = document.getElementById('noUploadedBooks');
+    
+    // Clear existing books
+    uploadedBooksList.innerHTML = '';
+    
+    // Show empty state if no books
+    if (teacherData.uploadedBooks.length === 0) {
+        noUploadedBooks.classList.remove('d-none');
+        return;
+    }
+    
+    // Hide empty state
+    noUploadedBooks.classList.add('d-none');
+    
+    // Populate books
+    teacherData.uploadedBooks.forEach(book => {
+        const row = document.createElement('tr');
+        
+        // Format date
+        const uploadDate = new Date(book.uploadDate);
+        const formattedDate = uploadDate.toLocaleDateString();
+        
+        row.innerHTML = `
+            <td>${book.title}</td>
+            <td>${book.subject}</td>
+            <td>${book.pages}</td>
+            <td>${formattedDate}</td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary me-2 view-book-btn" data-book-id="${book.id}">
+                    <i class="bi bi-eye me-1"></i>View
+                </button>
+                <button class="btn btn-sm btn-outline-danger delete-book-btn" data-book-id="${book.id}">
+                    <i class="bi bi-trash me-1"></i>Delete
+                </button>
+            </td>
+        `;
+        
+        uploadedBooksList.appendChild(row);
+    });
+    
+    // Add event listeners to buttons
+    document.querySelectorAll('.view-book-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const bookId = parseInt(button.getAttribute('data-book-id'));
+            viewBook(bookId);
+        });
+    });
+    
+    document.querySelectorAll('.delete-book-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const bookId = parseInt(button.getAttribute('data-book-id'));
+            deleteBook(bookId);
+        });
     });
 }
 
@@ -453,7 +531,7 @@ function handleSaveClassroomChanges() {
     alert('Classroom updated successfully');
 }
 
-// Handle file selection for quiz creation
+// Handle file selection for book upload
 function handleFileSelection(file) {
     // Validate file type
     const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
@@ -475,17 +553,17 @@ function handleFileSelection(file) {
     selectedFileName.classList.remove('d-none');
 }
 
-// Handle generate quiz
-function handleGenerateQuiz() {
-    const title = document.getElementById('quizTitle').value;
-    const classroomId = document.getElementById('quizClassroom').value;
-    const date = document.getElementById('quizDate').value;
-    const timeLimit = document.getElementById('quizTimeLimit').value;
-    const sections = document.getElementById('quizSections').value;
+// Handle upload book
+function handleUploadBook() {
+    const title = document.getElementById('bookTitle').value;
+    const author = document.getElementById('bookAuthor').value;
+    const subject = document.getElementById('bookSubject').value;
+    const description = document.getElementById('bookDescription').value;
+    const pages = document.getElementById('bookPages').value;
     
     // Validate form
-    if (!title || !classroomId || !date || !timeLimit) {
-        alert('Please fill all required fields');
+    if (!title) {
+        alert('Please enter a book title');
         return;
     }
     
@@ -498,11 +576,109 @@ function handleGenerateQuiz() {
         return;
     }
     
+    // Create new book
+    const newBook = {
+        id: Date.now(),
+        title: title,
+        author: author || 'Unknown',
+        subject: subject || 'Other',
+        pages: parseInt(pages) || 0,
+        description: description,
+        uploadDate: new Date().toISOString().split('T')[0]  // Today's date in YYYY-MM-DD format
+    };
+    
+    // Add the new book
+    teacherData.uploadedBooks.push(newBook);
+    
+    // Update dashboard stats and books list
+    updateDashboardStats();
+    populateUploadedBooks();
+    populateBookSelect();
+    
+    // Reset form
+    document.getElementById('bookTitle').value = '';
+    document.getElementById('bookAuthor').value = '';
+    document.getElementById('bookSubject').value = '';
+    document.getElementById('bookDescription').value = '';
+    document.getElementById('bookPages').value = '';
+    document.getElementById('fileInput').value = '';
+    
+    const selectedFileName = document.getElementById('selectedFileName');
+    selectedFileName.textContent = '';
+    selectedFileName.classList.add('d-none');
+    
+    // Show success message
+    alert('Book uploaded successfully!');
+}
+
+// View book
+function viewBook(bookId) {
+    // Find the book
+    const book = teacherData.uploadedBooks.find(b => b.id === bookId);
+    if (!book) return;
+    
+    // In a real app, this would open a book viewer
+    alert(`Viewing book: ${book.title} by ${book.author}\n\nIn a real application, this would open a book viewer.`);
+}
+
+// Delete book
+function deleteBook(bookId) {
+    // Ask for confirmation
+    if (!confirm('Are you sure you want to delete this book?')) {
+        return;
+    }
+    
+    // Remove book
+    teacherData.uploadedBooks = teacherData.uploadedBooks.filter(b => b.id !== bookId);
+    
+    // Update dashboard stats and books list
+    updateDashboardStats();
+    populateUploadedBooks();
+    populateBookSelect();
+    
+    // Show success message
+    alert('Book deleted successfully!');
+}
+
+// Handle generate quiz
+function handleGenerateQuiz() {
+    const title = document.getElementById('quizTitle').value;
+    const classroomId = document.getElementById('quizClassroom').value;
+    const bookId = document.getElementById('quizBook').value;
+    const pageFrom = document.getElementById('pageRangeFrom').value;
+    const pageTo = document.getElementById('pageRangeTo').value;
+    const date = document.getElementById('quizDate').value;
+    const timeLimit = document.getElementById('quizTimeLimit').value;
+    
+    // Validate form
+    if (!title || !classroomId || !bookId || !pageFrom || !pageTo || !date || !timeLimit) {
+        alert('Please fill all required fields');
+        return;
+    }
+    
+    // Validate page range
+    if (parseInt(pageFrom) > parseInt(pageTo)) {
+        alert('Invalid page range. "From" page must be less than or equal to "To" page');
+        return;
+    }
+    
     // Find classroom
     const classroom = teacherData.classrooms.find(c => c.id === parseInt(classroomId));
-    
     if (!classroom) {
         alert('Invalid classroom');
+        return;
+    }
+    
+    // Find book
+    const book = teacherData.uploadedBooks.find(b => b.id === parseInt(bookId));
+    if (!book) {
+        alert('Invalid book');
+        return;
+    }
+    
+    // Validate page range against book
+    if (parseInt(pageTo) > book.pages) {
+        alert(`The selected book only has ${book.pages} pages. Please enter a valid page range.`);
         return;
     }
     
@@ -512,6 +688,9 @@ function handleGenerateQuiz() {
         title: title,
         classroom: classroom.name,
         classroomId: classroom.id,
+        book: book.title,
+        bookId: book.id,
+        pageRange: `${pageFrom}-${pageTo}`,
         date: date
     };
     
@@ -528,15 +707,22 @@ function handleGenerateQuiz() {
     
     // Reset form
     document.getElementById('createQuizForm').reset();
-    document.getElementById('quizSections').value = '';
-    document.getElementById('fileInput').value = '';
-    const selectedFileName = document.getElementById('selectedFileName');
-    selectedFileName.textContent = '';
-    selectedFileName.classList.add('d-none');
     
     // Show success message
-    alert('Quiz created successfully!');
+    alert(`Quiz "${title}" created successfully from pages ${pageFrom}-${pageTo} of "${book.title}"!`);
+    
+    // Update test preview
+    document.getElementById('testPreview').innerHTML = `
+        <div class="alert alert-success">
+            <h5 class="mb-2">Quiz Created!</h5>
+            <p class="mb-0">
+                "${title}" has been created using pages ${pageFrom}-${pageTo} of "${book.title}".
+                The quiz is scheduled for ${new Date(date).toLocaleDateString()}.
+            </p>
+        </div>
+    `;
 }
+
 
 // Handle copy class code
 function handleCopyClassCode() {
@@ -575,6 +761,7 @@ function handleRegenerateClassCode() {
 function handleAddStudent() {
     if (!currentClassroom) return;
     
+    // In a real app, this would show a form or search interface
     // For demo purpose, we'll add a fake student
     const newStudent = {
         id: Date.now(),
@@ -624,7 +811,7 @@ function removeStudent(classroomId, studentId) {
     // Update dashboard stats
     updateDashboardStats();
 }
- 
+
 // Edit quiz
 function editQuiz(quizId) {
     // Find the quiz
@@ -651,8 +838,8 @@ function viewQuiz(quizId) {
     const quiz = teacherData.upcomingQuizzes.find(q => q.id === quizId);
     if (!quiz) return;
     
-    // this would navigate to a quiz details page (but for now it is an alert)
-    alert(`Viewing quiz: ${quiz.title}\n\n`);
+    // In a real app, this would navigate to a quiz details page
+    alert(`Viewing quiz: ${quiz.title}\n\nIn a real application, this would open a detailed view of the quiz.`);
 }
 
 // Generate random class code
@@ -669,7 +856,7 @@ function generateClassCode() {
 
 // Handle logout button click
 function handleLogout() {
-    // In a real app, this would clear session/tokens
+    // this should clear session/tokens
     // For demo purpose, redirect to index page
     window.location.href = '../../../index.html';
 }

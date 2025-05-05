@@ -132,15 +132,17 @@
   font-weight: 500;
 }
 
-.card-border-dashed {
-  border: 2px dashed var(--gray-300);
-  cursor: pointer;
-  transition: all 0.2s ease;
+#create-classroom-card {
+  border: 2px dashed var(--gray-300) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
 }
 
+
+
 .card-border-dashed:hover {
-  border-color: var(--purple);
-  background-color: rgba(139, 92, 246, 0.05);
+  border-color: var(--purple) !important;
+  background-color: rgba(139, 92, 246, 0.05) !important;
 }
 
 #file-upload-area {
@@ -151,6 +153,42 @@
 #file-upload-area:hover {
   border-color: var(--purple);
   background-color: rgba(139, 92, 246, 0.05);
+}
+
+/* Page range input styling */
+.page-range-container {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.page-range-input {
+  width: 120px;
+}
+
+.page-range-separator {
+  font-weight: bold;
+  color: #6c757d;
+}
+
+#generateQuizBtn{
+  width: 100% !important;
+
+}
+
+
+
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .page-range-container {
+      flex-direction: column;
+      align-items: flex-start;
+  }
+  
+  .page-range-input {
+      width: 100%;
+  }
 }
 
 /* Responsive adjustments */

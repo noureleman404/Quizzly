@@ -42,7 +42,7 @@
                 
                 <!-- Logout button -->
                 <button id="logoutButton" class="btn btn-outline-danger btn-sm">
-                    <a href="../../Pages/auth/login.html" class="btn btn-link text-dark">Log in</a>
+                    <a href="../../Pages/auth/login.html" class="btn btn-link text-dark">Log out</a>
                 </button>
             </div>
           </div>
@@ -85,10 +85,10 @@
                 <div class="stats-card shadow-sm" id="UQ-state">
                     <div class="d-flex align-items-center">
                         <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3 d-flex align-items-center justify-content-center" style="width: 3rem; height: 3rem;">
-                            <i class="bi bi-calendar text-info"></i>
+                            <i class="bi bi-journal-text text-info"></i>
                         </div>
                         <div>
-                            <p class="text-muted mb-0">Upcoming Quizzes</p>
+                            <p class="text-muted mb-0">Uploaded Books</p>
                             <h3 id="upcomingQuizzesCount" class="mb-0">0</h3>
                         </div>
                     </div>
@@ -103,6 +103,7 @@
                     <button class="dashboard-tab active" data-tab="classrooms">My Classrooms</button>
                     <button class="dashboard-tab" data-tab="quizzes">Upcoming Quizzes</button>
                     <button class="dashboard-tab" data-tab="create">Create Test</button>
+                    <button class="dashboard-tab" data-tab="upload">Upload Book</button>
                 </div>
             </div>
 
@@ -120,10 +121,10 @@
 
                         <!-- Create Classroom Card -->
                         <div class="col-md-4 mb-4">
-                            <div class="card border-dashed h-100">
+                            <div class="card border-dashed h-100" id="create-classroom-card">
                                 <div class="card-body text-center d-flex align-items-center justify-content-center">
                                     <div>
-                                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 mx-auto mb-3" style="width: 3rem; height: 3rem;"  >
+                                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 mx-auto mb-3" style="width: fit-content;">
                                             <i class="bi bi-plus-lg text-primary"></i>
                                         </div>
                                         <h3 class="h6">Create Classroom</h3>
@@ -177,10 +178,10 @@
                 <!-- Create Test Tab -->
                 <div class="dashboard-content d-none" data-content="create">
                     <h2 class="h5 mb-4">Create New Test</h2>
-                    <p class="text-muted mb-4">Generate unique tests for each student by uploading a textbook or course material.</p>
+                    <p class="text-muted mb-4">Create a new test for your students by selecting a book and specifying pages to include.</p>
 
                     <div class="row">
-                        <div class="col-lg-6">
+                        <div class="col-lg-6" style="width: 100%;">
                             <form id="createQuizForm">
                                 <div class="mb-3">
                                     <label class="form-label">Test Title</label>
@@ -196,6 +197,28 @@
                                 </div>
 
                                 <div class="mb-3">
+                                    <label class="form-label">Select Book</label>
+                                    <select class="form-select" id="quizBook" required>
+                                        <option value="">Select a book</option>
+                                        <!-- Book options will be populated by JS -->
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Page Range</label>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label class="form-label small text-muted">From</label>
+                                            <input type="number" class="form-control" id="pageRangeFrom" placeholder="1" min="1" required>
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label small text-muted">To</label>
+                                            <input type="number" class="form-control" id="pageRangeTo" placeholder="50" min="1" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
                                     <label class="form-label">Test Date</label>
                                     <input type="date" class="form-control" id="quizDate" required>
                                 </div>
@@ -204,34 +227,102 @@
                                     <label class="form-label">Time Limit (minutes)</label>
                                     <input type="number" class="form-control" id="quizTimeLimit" placeholder="60" min="5" max="180" required>
                                 </div>
+
+                                <button type="button" id="generateQuizBtn" class="gradient-button w-100 py-3">Generate Test</button>
                             </form>
                         </div>
 
+                    </div>
+                </div>
+
+                <!-- Upload Book Tab -->
+                <div class="dashboard-content d-none" data-content="upload">
+                    <h2 class="h5 mb-4">Upload Source Material</h2>
+                    <p class="text-muted mb-4">Upload textbooks or course materials to generate tests from. Supported formats include PDF, DOCX, and TXT.</p>
+
+                    <div class="row">
                         <div class="col-lg-6">
                             <div class="mb-3">
-                                <label class="form-label">Upload Source Material</label>
+                                <label class="form-label">Book Title</label>
+                                <input type="text" class="form-control" id="bookTitle" placeholder="Enter book title" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Author</label>
+                                <input type="text" class="form-control" id="bookAuthor" placeholder="Enter author name">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Subject</label>
+                                <select class="form-select" id="bookSubject">
+                                    <option value="">Select subject</option>
+                                    <option value="biology">Biology</option>
+                                    <option value="chemistry">Chemistry</option>
+                                    <option value="physics">Physics</option>
+                                    <option value="mathematics">Mathematics</option>
+                                    <option value="literature">Literature</option>
+                                    <option value="history">History</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Description (Optional)</label>
+                                <textarea class="form-control" id="bookDescription" rows="3" placeholder="Brief description about the book..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="mb-4">
+                                <label class="form-label">Upload File</label>
                                 <div class="border-dashed rounded p-4 text-center" id="uploadArea">
                                     <i class="bi bi-cloud-upload text-primary display-4"></i>
-                                    <p class="mt-2">Drag and drop a PDF, or <label for="fileInput" class="text-primary" style="cursor: pointer;">browse</label></p>
+                                    <p class="mt-2">Drag and drop a file, or <label for="fileInput" class="text-primary" style="cursor: pointer;">browse</label></p>
                                     <p class="text-muted small">Supports: PDF, DOCX, TXT (Max 25MB)</p>
                                     <input type="file" id="fileInput" class="d-none" accept=".pdf,.docx,.txt">
                                 </div>
                                 <p id="selectedFileName" class="small text-success mt-2 d-none"></p>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Test Sections</label>
-                                <textarea class="form-control" id="quizSections" rows="4" placeholder="Specify the chapters or sections to include in the test..."></textarea>
-                            </div>
+                            <button type="button" id="uploadBookBtn" class="gradient-button w-100 py-3">
+                                <i class="bi bi-upload me-2"></i>Upload Book
+                            </button>
+                        </div>
+                    </div>
 
-                            <button type="button" id="generateQuizBtn" class="gradient-button w-100 py-3">Generate Test</button>
+                    <hr class="my-5">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="h5 mb-0">Uploaded Books</h3>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Book Title</th>
+                                    <th>Subject</th>
+                                    <th>Pages</th>
+                                    <th>Upload Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="uploadedBooksList">
+                                <!-- Uploaded books will be populated here by JS -->
+                            </tbody>
+                        </table>
+                        <div id="noUploadedBooks" class="text-center py-5 empty-state d-none">
+                            <div class="rounded-circle bg-light p-4 d-inline-block mb-3">
+                                <i class="bi bi-journal-text text-primary fs-2"></i>
+                            </div>
+                            <h4>No uploaded books</h4>
+                            <p class="text-muted">Upload a book to get started.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Create Classroom Modal -->
         <div class="modal fade" id="createClassroomModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -263,7 +354,6 @@
             </div>
         </div>
 
-        <!-- Manage Classroom Modal -->
         <div class="modal fade" id="manageClassroomModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
