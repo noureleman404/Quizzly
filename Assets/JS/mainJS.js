@@ -10,15 +10,15 @@ document.addEventListener('DOMContentLoaded', function() {
     loadNavigation();
     
     // Page-specific initialization
-    if (document.getElementById('quiz')) {
-        initQuiz();
-    } else if (document.getElementById('dashboard')) {
-        initDashboard();
-    } else if (document.getElementById('signupForm')) {
-        initSignupForm();
-    } else if (document.getElementById('loginForm')) {
-        initLoginForm();
-    }
+    // if (document.getElementById('quiz')) {
+    //     initQuiz();
+    // } else if (document.getElementById('dashboard')) {
+    //     initDashboard();
+    // } else if (document.getElementById('signupForm')) {
+    //     initSignupForm();
+    // } else if (document.getElementById('loginForm')) {
+    //     initLoginForm();
+    // }
 });
 
 // For consistent navigation

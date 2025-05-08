@@ -119,7 +119,56 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
     };
-  
+    async function attemptLogin(email, password, role) {
+      try {
+          const response = await fetch ('http://localhost:3000/auth/login' , {
+              method: 'POST' , 
+              headers: {
+                  "Content-Type" : "application/json"
+              },
+              body: JSON.stringify({
+                  email: email, 
+                  password: password , 
+                  type: role
+              })
+          });
+          const data = await response.json();
+          if(response.ok){
+              localStorage.setItem('token' , data.token);
+              localStorage.setItem('currentUser' , JSON.stringify({
+                  id: data.user.id , 
+                  name: data.user.name , 
+                  email : data.user.email , 
+                  role: data.user.role , 
+                  isLoggedIn: true
+              }));
+
+              switch (role) {
+                  case 'teacher':
+                      window.location.href = 'dashboard.html';
+                      break;
+                  case 'student':
+                      window.location.href = 'dashboard.html';
+                      break;
+                  case 'admin':
+                      window.location.href = 'dashboard.html'
+                      break;
+
+              }}else{
+                  loginError.textContent = data.error || 'Login failed';
+                  loginError.classList.remove('d-none');
+                  loginBtn.disabled = false;
+                  loginBtn.textContent = 'Login';
+              }
+          
+      }catch (err) {
+          console.error('Login request error:', err);
+      loginError.textContent = 'Something went wrong. Please try again.';
+      loginError.classList.remove('d-none');
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'Login';
+      }
+  }
     const handleFormSubmission = (form) => {
       const submitButton = form.querySelector('button[type="submit"]');
       const defaultText = submitButton.dataset.defaultText || submitButton.textContent;
@@ -143,6 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
   
       console.log(`${form === forms.login ? 'Login' : 'Signup'} form data:`, formData);
+      attemptLogin(formData.loginEmail , formData.LoginPassword)
   
     };
   
