@@ -1,25 +1,19 @@
 const express = require('express');
 const { verifyToken } = require('../../middlewares/authToken');
-const {verifyTeacher} = require('../../middlewares/verifyTeacher')
+const {verifyStudent} = require('../../middlewares/verifyStudent');
+const { getDashboard, joinClassroom, getExamQuestionsForStudent, submitQuizAnswers } = require('./student.controller');
 const router = express.Router();
 require('dotenv').config();
 
 
 // get dashboard data
-router.get('/dashboard', verifyToken , async (req, res) => {
-  try {
-    console.log(req.userID)
-    const { rows } = await pool.query(
-      'SELECT * FROM books WHERE teacher_id = $1',
-      [req.userID] 
-    );
-    res.status(200).json(rows);
-  } catch (error) {
-    console.error('Error fetching books:', error);
-    res.status(500).json({ message: 'Error fetching books', error: error.message });
-  }
-});
+router.get('/dashboard', verifyToken , verifyStudent, getDashboard);
+//join a classroom
+router.post('/classroom' , verifyToken , verifyStudent, joinClassroom)
+
+router.get('/quiz' , verifyToken , verifyStudent , getExamQuestionsForStudent)
+
+router.post('/quiz' , verifyToken , verifyStudent , submitQuizAnswers);
 
 
-
-module.exports = router;
+module.exports = router ;
