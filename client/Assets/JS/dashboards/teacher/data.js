@@ -17,7 +17,7 @@ async function loadDashboardData() {
 
         const data = await response.json();
         const { books = [], quizzes = [], classrooms = [], completions = [], students_num } = data;
-        
+        console.log(quizzes);
         teacherData = {
             name: JSON.parse(localStorage.getItem('currentUser')).name,
             classrooms: classrooms,

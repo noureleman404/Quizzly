@@ -70,31 +70,62 @@ export function handleFileSelection(file) {
     document.getElementById('selectedFileName').classList.remove('d-none');
 }
 
-export function handleUploadBook() {
+export async function handleUploadBook() {
     const title = document.getElementById('bookTitle').value;
     const author = document.getElementById('bookAuthor').value;
     const subject = document.getElementById('bookSubject').value;
-    const pages = parseInt(document.getElementById('bookPages').value);
     const fileInput = document.getElementById('fileInput');
+    const description  = document.getElementById('bookDescription');
 
+    const token = localStorage.getItem("token");
+    
     if (!title || !fileInput.files[0]) {
         alert('Title and file are required');
         return;
     }
 
-    const newBook = {
-        id: Date.now(),
-        title: title,
-        author: author || 'Unknown',
-        subject: subject || 'General',
-        pages: pages || 0,
-        created_at: new Date().toISOString().split('T')[0]
-    };
+    const formData = new FormData();
+    // formData.append('title', title);
+    formData.append('author', author || 'Unknown');
+    formData.append('subject', subject || 'General');
+    formData.append('description', description || '');
+    formData.append('book', fileInput.files[0]);
+    
+    await fetch('http://localhost:8000/UploadBook', {
+        method: 'POST',
+        headers: {
+            "Authorization" : `Bearer ${token}`
+        }, 
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to upload book');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("Book uploaded", data);
 
-    teacherData.uploadedBooks.push(newBook);
+        // Optionally update UI with new book
+        populateUploadedBooks();
+        populateBookSelect();
+
+        // Reset form
+        document.getElementById('uploadBookForm').reset();
+        document.getElementById('selectedFileName').classList.add('d-none');
+
+        alert('Book uploaded successfully!');
+    })
+    .catch(error => {
+        console.error(error);
+        alert('There was an error uploading the book.');
+    });
+
+    console.log("Book uploaded")
+    // teacherData.uploadedBooks.push(newBook);
     populateUploadedBooks();
     populateBookSelect();
-
     // Reset form
     document.getElementById('uploadBookForm').reset();
     document.getElementById('selectedFileName').classList.add('d-none');
@@ -107,11 +138,32 @@ function viewBook(bookId) {
     alert(`Viewing: ${book.title}\nAuthor: ${book.author}\nPages: ${book.pages}`);
 }
 
-function deleteBook(bookId) {
+async function deleteBook(bookId) {
     if (!confirm('Permanently delete this book?')) return;
-    
-    teacherData.uploadedBooks = teacherData.uploadedBooks.filter(b => b.id !== bookId);
-    populateUploadedBooks();
-    populateBookSelect();
-    alert('Book deleted successfully');
-}
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`http://localhost:3000/teacher/books/${bookId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json' ,
+          "Authorization" : `Bearer ${token}`
+        }
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to delete book');
+      }
+  
+      // Remove from local state and update UI
+      teacherData.uploadedBooks = teacherData.uploadedBooks.filter(b => b.id !== bookId);
+      populateUploadedBooks();
+      populateBookSelect();
+  
+      alert('Book deleted successfully');
+    } catch (error) {
+      console.error('Error deleting book:', error);
+      alert(`Failed to delete book: ${error.message}`);
+    }
+  }

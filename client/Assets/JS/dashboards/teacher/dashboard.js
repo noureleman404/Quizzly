@@ -5,9 +5,9 @@ import {
     logoutButton, 
     initModals 
 } from './dom-elements.js';
-import { handleCreateClassroom, populateClassrooms, showCreateClassroomModal } from './classrooms.js';
+import { handleCreateClassroom, populateClassrooms, showCreateClassroomModal, showManageClassroomModal } from './classrooms.js';
 import { handleGenerateQuiz, populateBookSelect, populateQuizClassroomSelect, populateUpcomingQuizzes } from './quizzes.js';
-import { populateUploadedBooks, handleFileSelection } from './books.js';
+import { populateUploadedBooks, handleFileSelection, handleUploadBook } from './books.js';
 import { switchToTab } from './utils.js';
 
 // Initialize the dashboard
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('totalStudentsCount').textContent = teacherData.studentsNum;
         document.getElementById('classroomsCount').textContent = teacherData.classrooms.length;
         document.getElementById('uploadedBooksCount').textContent = teacherData.uploadedBooks.length;
-        
+
         // Populate dashboard content
         populateClassrooms();
         populateUpcomingQuizzes();
@@ -46,6 +46,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('newClassroomBtn').addEventListener('click', showCreateClassroomModal);
         document.getElementById('saveClassroomBtn').addEventListener('click', handleCreateClassroom);
         document.getElementById('generateQuizBtn').addEventListener('click', handleGenerateQuiz);
+        document.getElementById('uploadBookBtn').addEventListener('click', handleUploadBook);
+        
 
         // Add event listeners for file upload in upload book tab
         const fileInput = document.getElementById('fileInput');

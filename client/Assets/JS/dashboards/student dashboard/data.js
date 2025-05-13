@@ -37,7 +37,7 @@ export const studentData = {
             className: 'Biology 101',
             date: '2025-04-10',
             score: '85%',
-            grade: 'B+'
+            grade: 'C+'
         },
         {
             id: 102,

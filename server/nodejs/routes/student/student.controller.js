@@ -126,7 +126,7 @@ const joinClassroom = async (req, res) => {
       res.status(500).json({ message: 'Internal server error.' });
     }
   };
-  const getExamQuestionsForStudent = async (req, res) => {
+const getExamQuestionsForStudent = async (req, res) => {
     try {
         const student_id = req.userID;
         const { quiz_id } = req.body;
@@ -176,7 +176,6 @@ const joinClassroom = async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 };
-
 
 const submitQuizAnswers = async (req, res) => {
     try {
@@ -249,12 +248,38 @@ const submitQuizAnswers = async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 };
+const getClassroom = async (req, res) => {
+  try {
+    const { classroom_id } = req.params; 
+    
+    const classroomResult = await pool.query(
+      'SELECT * FROM classrooms WHERE id = $1',
+      [classroom_id]
+    );
+    const studentsResult = await pool.query(
+      `SELECT s.id AS student_id, s.name, cs.joined_at , s.email as email
+       FROM classroom_students cs
+       JOIN students s ON cs.student_id = s.id
+       WHERE cs.classroom_id = $1`,
+      [classroom_id]
+    );
 
+
+    res.status(200).json({
+      classroom: classroomResult.rows[0], 
+      students: studentsResult.rows,
+    });
+  } catch (error) {
+    console.error('Error fetching classroom:', error);
+    res.status(500).json({ message: 'Error fetching classroom', error: error.message });
+  }
+};
 
 
 module.exports = {
     getDashboard , 
     joinClassroom,
     getExamQuestionsForStudent ,
-    submitQuizAnswers
+    submitQuizAnswers , 
+    getClassroom
 };

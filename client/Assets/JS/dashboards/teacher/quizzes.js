@@ -16,16 +16,16 @@ export function populateUpcomingQuizzes() {
 
     teacherData.upcomingQuizzes.forEach(quiz => {
         const row = document.createElement('tr');
-        const quizDate = new Date(quiz.date);
+        const quizDate = new Date(quiz.created_at);
         const formattedDate = quizDate.toLocaleDateString();
 
         row.innerHTML = `
             <td>${quiz.title}</td>
-            <td>${quiz.classroom}</td>
+            <td>${quiz.classroom_name}</td>
             <td>${formattedDate}</td>
             <td>
-                <button class="btn btn-sm btn-outline-primary me-2 edit-quiz-btn" data-quiz-id="${quiz.id}">Edit</button>
-                <button class="btn btn-sm btn-primary view-quiz-btn" data-quiz-id="${quiz.id}">View</button>
+                <button class="btn btn-sm btn-outline-primary me-2 edit-quiz-btn" data-quiz-id="${quiz.quiz_id}">Edit</button>
+                <button class="btn btn-sm btn-primary view-quiz-btn" data-quiz-id="${quiz.quiz_id}">View</button>
             </td>
         `;
         upcomingQuizzesList.appendChild(row);
@@ -35,6 +35,7 @@ export function populateUpcomingQuizzes() {
     document.querySelectorAll('.edit-quiz-btn').forEach(button => {
         button.addEventListener('click', () => {
             const quizId = parseInt(button.getAttribute('data-quiz-id'));
+            console.log(quizId)
             editQuiz(quizId);
         });
     });

@@ -8,7 +8,7 @@ function populateClassrooms() {
     const classroomsList = document.getElementById('classroomsList');
     const noClassrooms = document.getElementById('noClassrooms');
     const createClassroomCard = classroomsList.querySelector('.card.border-dashed').parentNode;
-    
+    document.getElementById('saveClassroomChangesBtn').addEventListener('click' , handleSaveClassroomChanges);
     // Clear existing classrooms
     while (classroomsList.firstChild && classroomsList.firstChild !== createClassroomCard) {
         classroomsList.removeChild(classroomsList.firstChild);
@@ -51,18 +51,19 @@ function populateClassrooms() {
         classroomsList.insertBefore(classroomCard, createClassroomCard);
     });
     
-    // Add event listeners
-    document.querySelectorAll('.manage-classroom-btn').forEach(button => {
-        button.addEventListener('click', () => {
-            const classroomId = parseInt(button.getAttribute('data-classroom-id'));
-            showManageClassroomModal(classroomId);
-        });
-    });
     
     document.querySelectorAll('.new-quiz-btn').forEach(button => {
         button.addEventListener('click', () => {
             const classroomId = parseInt(button.getAttribute('data-classroom-id'));
             showCreateQuizForClassroom(classroomId);
+        });
+    });
+
+    document.querySelectorAll('.manage-classroom-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            console.log('blabla')
+            const classroomId = parseInt(button.getAttribute('data-classroom-id'));
+            showManageClassroomModal(classroomId);
         });
     });
     
@@ -77,24 +78,82 @@ function showCreateClassroomModal() {
 function showManageClassroomModal(classroomId) {
     currentClassroom = teacherData.classrooms.find(c => c.id === classroomId);
     if (!currentClassroom) return;
-    
+
+    // Set modal title and input values
     document.getElementById('manageClassroomTitle').textContent = currentClassroom.name;
     document.getElementById('editClassroomName').value = currentClassroom.name;
     document.getElementById('editClassroomSubject').value = currentClassroom.subject || '';
     document.getElementById('editClassroomDescription').value = currentClassroom.description || '';
-    document.getElementById('classroomCode').value = currentClassroom.code;
     
+    // Set the initial classroom code
+    const classroomCodeInput = document.getElementById('classroomCode');
+    classroomCodeInput.value = currentClassroom.code || generateClassCode(); // Default or generated code
+    
+    // Handle "Regenerate Code" button
+    document.getElementById('regenerateCodeBtn').addEventListener('click', () => {
+        const newCode = generateClassCode();
+        classroomCodeInput.value = newCode; // Update input with new code
+
+    });
+    document.getElementById('copyCodeBtn').addEventListener('click', () => {
+        const classroomCodeInput = document.getElementById('classroomCode'); // Get the classroom code input element
+        const copyButton = document.getElementById('copyCodeBtn'); // Get the copy button element
+        if (document.activeElement !== classroomCodeInput) {
+            classroomCodeInput.focus();
+        }
+        
+        if (classroomCodeInput.value) {
+            navigator.clipboard.writeText(classroomCodeInput.value)
+                .then(() => {
+                    // Change the button text to 'Copied!'
+                    console.log(copyButton.textContent)
+                    copyButton.innerHTML = '<i class="bi bi-clipboard"></i> Copied';
+                    
+                    // Reset the button text back to 'Copy' after 1 second (1000ms)
+                    setTimeout(() => {
+                        copyButton.innerHTML = '<i class="bi bi-clipboard"></i> Copy';
+                    }, 1000);
+                })
+                .catch(err => {
+                    console.error('Failed to copy text: ', err);
+                });
+        } else {
+            alert('No classroom code available to copy.');
+        }
+    });
+
+    // Populate the student list
     populateStudentsTable(classroomId);
+
+    // Show the modal
     manageClassroomModal.show();
 }
 
-function populateStudentsTable(classroomId) {
+async function populateStudentsTable(classroomId) {
     const studentsTableBody = document.getElementById('studentsTableBody');
     const noStudentsYet = document.getElementById('noStudentsYet');
     studentsTableBody.innerHTML = '';
-    
-    const students = teacherData.studentsInClass[classroomId] || [];
-    
+
+    const token = localStorage.getItem('token');
+    const response = await fetch(`http://localhost:3000/teacher/classrooms/${classroomId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+    });
+    if (!response.ok) {
+        throw new Error('Failed to fetch dashboard data');
+    }
+    const data = await response.json();
+    const {classroom , students = []} = data;
+
+    // const students = [
+    //                 { id: 101, name: 'John Smith', email: 'john@example.com' },
+    //                 { id: 102, name: 'Emily Brown', email: 'emily@example.com' },
+    //                 { id: 103, name: 'Michael Jones', email: 'michael@example.com' }
+    //             ];
+    console.log(students);
     if (students.length === 0) {
         noStudentsYet.classList.remove('d-none');
         return;
@@ -173,13 +232,31 @@ async function handleCreateClassroom() {
     }
 }
 
-function handleSaveClassroomChanges() {
+async function handleSaveClassroomChanges() {
     if (!currentClassroom) return;
-    
     currentClassroom.name = document.getElementById('editClassroomName').value;
     currentClassroom.subject = document.getElementById('editClassroomSubject').value;
     currentClassroom.description = document.getElementById('editClassroomDescription').value;
-    
+    currentClassroom.code = document.getElementById('classroomCode').value;
+
+    const token = localStorage.getItem('token');
+    const response = await fetch(`http://localhost:3000/teacher/classrooms/${currentClassroom.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            } , 
+            body: JSON.stringify({
+                name : currentClassroom.name , 
+                subject : currentClassroom.subject , 
+                description: currentClassroom.description , 
+                joinCode: currentClassroom.code
+            })
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to update classroom data');
+    }
     populateClassrooms();
     manageClassroomModal.hide();
     alert('Classroom updated successfully');

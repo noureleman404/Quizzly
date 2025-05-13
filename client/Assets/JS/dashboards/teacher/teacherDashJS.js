@@ -161,7 +161,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
     
     // Add event listener for upload book button
-    document.getElementById('uploadBookBtn').addEventListener('click', handleUploadBook);
     
 });
 
@@ -594,7 +593,7 @@ function handleFileSelection(file) {
 }
 
 // Handle upload book
-function handleUploadBook() {
+async function  handleUploadBook() {
     const title = document.getElementById('bookTitle').value;
     const author = document.getElementById('bookAuthor').value;
     const subject = document.getElementById('bookSubject').value;

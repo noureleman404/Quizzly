@@ -2,7 +2,7 @@ const express = require('express');
 const { verifyToken } = require('../../middlewares/authToken');
 const { pool } = require('../../databaseConf');
 const {verifyTeacher} = require('../../middlewares/verifyTeacher');
-const { getBooks, getQuizzes, getClassrooms, createClassroom, getDashboard, getClassroom , kickStudent} = require('./teacher.controller');
+const { getBooks, getQuizzes, getClassrooms, createClassroom, getDashboard, getClassroom , kickStudent, deleteBook, updateClassroom} = require('./teacher.controller');
 
 const router = express.Router();
 require('dotenv').config();
@@ -22,6 +22,10 @@ router.get('/classrooms/:classroom_id' , verifyToken , verifyTeacher , getClassr
 router.post('/classrooms', verifyToken, createClassroom);
 
 router.post('/classrooms/:id/kick' , verifyToken , verifyTeacher , kickStudent)
+
 router.get('/dashboard' , verifyToken , verifyTeacher , getDashboard)
 
+router.delete('/books/:book_id' , verifyToken , verifyTeacher , deleteBook);
+
+router.put('/classrooms/:classroom_id' , verifyToken , verifyTeacher , updateClassroom);
 module.exports = router;

@@ -11,10 +11,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from workflow.workflow import generate_quiz , print_quiz , store_quizzes
 load_dotenv()
 
-origins = [
-    "http://127.0.0.1:5500",
-    "http://localhost:5500", 
-]
+origins=["*"]
+
 app = FastAPI()
 
 app.add_middleware(
