@@ -227,6 +227,16 @@
                                     <label class="form-label">Time Limit (minutes)</label>
                                     <input type="number" class="form-control" id="quizTimeLimit" placeholder="60" min="5" max="180" required>
                                 </div>
+                                <div class="form-group mb-4">
+                                    <div class="custom-checkbox-container">
+                                        <label class="custom-checkbox-label">
+                                           <input type="checkbox" id="personalizedQuiz" name="personalizedQuiz" class="custom-checkbox-input">
+                                           <span class="custom-checkbox"></span>
+                                           <span class="ms-2">Personalized</span>
+                                        </label>
+                                        <small class="form-text text-muted d-block mt-1">Create a personalized test for each student so it matches their level.</small>
+                                    </div>
+                               </div>
 
                                 <button type="button" id="generateQuizBtn" class="gradient-button w-100 py-3">Generate Test</button>
                             </form>
