@@ -171,15 +171,16 @@ def store_quizzes(
     page_end,
     teacher_id,
     title,
-    quizzes 
+    quizzes  ,
+    duration
 ):
     try:
         with conn.cursor() as cur:
             cur.execute("""
-                INSERT INTO quizzes (book_id, classroom_id, deadline_date, num_versions, page_end, page_start, teacher_id, title)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO quizzes (book_id, classroom_id, deadline_date, num_versions, page_end, page_start, teacher_id, title , duration)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s , %s)
                 RETURNING quiz_id
-            """, (book_id, classroom_id, deadline_date, numOfVersions, page_end, page_start, teacher_id, title))
+            """, (book_id, classroom_id, deadline_date, numOfVersions, page_end, page_start, teacher_id, title , duration))
             quiz_id = cur.fetchone()[0]
 
             for version_number , quiestions in enumerate(quizzes , start=1):

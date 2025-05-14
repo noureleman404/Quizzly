@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - Quizzy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../../CSS/main.css">
+    <link rel="stylesheet" href="../../CSS/utilities.css">
+    <link href="../../CSS/dashboard.css" rel="stylesheet">
+
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg fixed-top bg-white shadow-sm">
+        <div class="container">
+          <a class="navbar-brand gradient-text fw-bold" href="#">Quizzly</a> 
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+            <div class="d-flex align-items-center">
+                <span id="teacherNameHome" class="me-3 fw-bold">John Doe</span>
+                
+                <button id="logoutButton" class="btn btn-outline-danger btn-sm">
+                    <a href="../auth/login.html" class="btn btn-link text-dark">Log out</a>
+                </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="global-loading" style="
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255, 255, 255, 0.7);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+  ">
+      <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+      </div>
+  </div>
+      
+    <div class="container mt-5 pt-5" id="dashboard">
+        <!-- Dashboard Header -->
+        <h1 class="h2 mb-4">Welcome, <span id="teacherName">Dr. Johnson</span>!</h1>
+
+        <!-- Quick Stats -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="stats-card shadow-sm" id="TS-state" >
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3 d-flex align-items-center justify-content-center" style="width: 3rem; height: 3rem;">
+                            <i class="bi bi-people text-primary"></i>
+                        </div>
+                        <div>
+                            <p class="text-muted mb-0">Total Students</p>
+                            <h3 id="totalStudentsCount" class="mb-0">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stats-card shadow-sm" id="Classroom-state">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-danger bg-opacity-10 p-3 me-3 d-flex align-items-center justify-content-center" style="width: 3rem; height: 3rem;">
+                            <i class="bi bi-book text-danger"></i>
+                        </div>
+                        <div>
+                            <p class="text-muted mb-0">Classrooms</p>
+                            <h3 id="classroomsCount" class="mb-0">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stats-card shadow-sm" id="UQ-state">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3 d-flex align-items-center justify-content-center" style="width: 3rem; height: 3rem;">
+                            <i class="bi bi-journal-text text-info"></i>
+                        </div>
+                        <div>
+                            <p class="text-muted mb-0">Uploaded Books</p>
+                            <h3 id="uploadedBooksCount" class="mb-0">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Tabs -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-white border-bottom-0">
+                <div class="nav nav-tabs card-header-tabs">
+                    <button class="dashboard-tab active" data-tab="classrooms">My Classrooms</button>
+                    <button class="dashboard-tab" data-tab="quizzes">Upcoming Quizzes</button>
+                    <button class="dashboard-tab" data-tab="create">Create Test</button>
+                    <button class="dashboard-tab" data-tab="upload">Upload Book</button>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <!-- Classrooms Tab -->
+                <div class="dashboard-content" data-content="classrooms">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="h5 mb-0">Your Classrooms</h2>
+                        <button id="newClassroomBtn" class="gradient-button">
+                            <i class="bi bi-plus-lg me-2"></i>New Classroom
+                        </button>
+                    </div>
+                    <div id="classroomsList" class="row">
+                        <!-- Classrooms will be populated here by JS -->
+
+                        <!-- Create Classroom Card -->
+                        <div class="col-md-4 mb-4">
+                            <div class="card border-dashed h-100" id="create-classroom-card">
+                                <div class="card-body text-center d-flex align-items-center justify-content-center">
+                                    <div>
+                                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 mx-auto mb-3" style="width: fit-content;">
+                                            <i class="bi bi-plus-lg text-primary"></i>
+                                        </div>
+                                        <h3 class="h6">Create Classroom</h3>
+                                        <p class="text-muted small">Add a new classroom</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="noClassrooms" class="text-center py-5 empty-state d-none">
+                        <div class="rounded-circle bg-light p-4 d-inline-block mb-3">
+                            <i class="bi bi-book text-primary fs-2"></i>
+                        </div>
+                        <h4>No classrooms yet</h4>
+                        <p class="text-muted">Create your first classroom to get started.</p>
+                    </div>
+                </div>
+
+                <!-- Upcoming Quizzes Tab -->
+                <div class="dashboard-content d-none" data-content="quizzes">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="h5 mb-0">Upcoming Quizzes</h2>
+                        <button id="scheduleQuizBtn" class="gradient-button">
+                            <i class="bi bi-plus-lg me-2"></i>Schedule Quiz
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Quiz Title</th> 
+                                    <th>Classroom</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="upcomingQuizzesList">
+                            </tbody>
+                        </table>
+                        <div id="noUpcomingQuizzes" class="text-center py-5 empty-state d-none">
+                            <div class="rounded-circle bg-light p-4 d-inline-block mb-3">
+                                <i class="bi bi-calendar text-primary fs-2"></i>
+                            </div>
+                            <h4>No upcoming quizzes</h4>
+                            <p class="text-muted">Schedule a quiz to get started.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Create Test Tab -->
+                <div class="dashboard-content d-none" data-content="create">
+                    <h2 class="h5 mb-4">Create New Test</h2>
+                    <p class="text-muted mb-4">Create a new test for your students by selecting a book and specifying pages to include.</p>
+
+                    <div class="row">
+                        <div class="col-lg-6" style="width: 100%;">
+                            <form id="createQuizForm">
+                                <div class="mb-3">
+                                    <label class="form-label">Test Title</label>
+                                    <input type="text" class="form-control" id="quizTitle" placeholder="Enter test title" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Select Classroom</label>
+                                    <select class="form-select" id="quizClassroom" required>
+                                        <option value="">Select a classroom</option>
+                                        <!-- Classroom options will be populated by JS -->
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Select Book</label>
+                                    <select class="form-select" id="quizBook" required>
+                                        <option value="">Select a book</option>
+                                        <!-- Book options will be populated by JS -->
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Page Range</label>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label class="form-label small text-muted">From</label>
+                                            <input type="number" class="form-control" id="pageRangeFrom" placeholder="1" min="1" required>
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label small text-muted">To</label>
+                                            <input type="number" class="form-control" id="pageRangeTo" placeholder="50" min="1" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Test Date</label>
+                                    <input type="date" class="form-control" id="quizDate" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Time Limit (minutes)</label>
+                                    <input type="number" class="form-control" id="quizTimeLimit" placeholder="60" min="5" max="180" required>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <div class="custom-checkbox-container">
+                                        <label class="custom-checkbox-label">
+                                           <input type="checkbox" id="personalizedQuiz" name="personalizedQuiz" class="custom-checkbox-input">
+                                           <span class="custom-checkbox"></span>
+                                           <span class="ms-2">Personalized</span>
+                                        </label>
+                                        <small class="form-text text-muted d-block mt-1">Create a personalized test for each student so it matches their level.</small>
+                                    </div>
+                               </div>
+
+                                <button type="button" id="generateQuizBtn" class="gradient-button w-100 py-3">Generate Test</button>
+                            </form>
+                            <div id="testPreview" class="mt-4 d-none"></div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Upload Book Tab -->
+                <div class="dashboard-content d-none" data-content="upload">
+                    <h2 class="h5 mb-4">Upload Source Material</h2>
+                    <p class="text-muted mb-4">Upload textbooks or course materials to generate tests from. Supported formats include PDF, DOCX, and TXT.</p>
+                    <form id="uploadBookForm">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label class="form-label">Book Title</label>
+                                <input type="text" class="form-control" id="bookTitle" placeholder="Enter book title" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Author</label>
+                                <input type="text" class="form-control" id="bookAuthor" placeholder="Enter author name">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Subject</label>
+                                <select class="form-select" id="bookSubject">
+                                    <option value="">Select subject</option>
+                                    <option value="biology">Biology</option>
+                                    <option value="chemistry">Chemistry</option>
+                                    <option value="physics">Physics</option>
+                                    <option value="mathematics">Mathematics</option>
+                                    <option value="literature">Literature</option>
+                                    <option value="history">History</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Description (Optional)</label>
+                                <textarea class="form-control" id="bookDescription" rows="3" placeholder="Brief description about the book..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="mb-4">
+                                <label class="form-label">Upload File</label>
+                                <div class="border-dashed rounded p-4 text-center" id="uploadArea">
+                                    <i class="bi bi-cloud-upload text-primary display-4"></i>
+                                    <p class="mt-2">Drag and drop a file, or <label for="fileInput" class="text-primary" style="cursor: pointer;">browse</label></p>
+                                    <p class="text-muted small">Supports: PDF, DOCX, TXT (Max 25MB)</p>
+                                    <input type="file" id="fileInput" class="d-none" accept=".pdf,.docx,.txt">
+                                </div>
+                                <p id="selectedFileName" class="small text-success mt-2 d-none"></p>
+                            </div>
+
+                            <button type="button" id="uploadBookBtn" class="gradient-button w-100 py-3">
+                                <i class="bi bi-upload me-2"></i>Upload Book
+                            </button>
+                        </div>
+                    </div>
+                    </form>
+
+                    <hr class="my-5">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="h5 mb-0">Uploaded Books</h3>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Book Title</th>
+                                    <th>Subject</th>
+                                    <th>Pages</th>
+                                    <th>Upload Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="uploadedBooksList">
+                                <!-- Uploaded books will be populated here by JS -->
+                            </tbody>
+                        </table>
+                        <div id="noUploadedBooks" class="text-center py-5 empty-state d-none">
+                            <div class="rounded-circle bg-light p-4 d-inline-block mb-3">
+                                <i class="bi bi-journal-text text-primary fs-2"></i>
+                            </div>
+                            <h4>No uploaded books</h4>
+                            <p class="text-muted">Upload a book to get started.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="createClassroomModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create New Classroom</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="createClassroomForm">
+                            <div class="mb-3">
+                                <label for="classroomName" class="form-label">Classroom Name</label>
+                                <input type="text" class="form-control" id="classroomName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="classroomSubject" class="form-label">Subject</label>
+                                <input type="text" class="form-control" id="classroomSubject">
+                            </div>
+                            <div class="mb-3">
+                                <label for="classroomDescription" class="form-label">Description (Optional)</label>
+                                <textarea class="form-control" id="classroomDescription" rows="3"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" id="saveClassroomBtn" class="gradient-button">Create Classroom</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="manageClassroomModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Manage Classroom: <span id="manageClassroomTitle"></span></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="nav nav-tabs" id="classroomTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="students-tab" data-bs-toggle="tab" data-bs-target="#students" type="button" role="tab">Students</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab">Class Details</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content pt-3">
+                            <div class="tab-pane fade show active" id="students" role="tabpanel">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <h6>Student List</h6>
+                                    <button class="btn btn-sm btn-primary" id="addStudentBtn">
+                                        <i class="bi bi-person-plus"></i> Add Student
+                                    </button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="studentsTableBody">
+                                            <!-- Students will be populated here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div id="noStudentsYet" class="text-center py-4 d-none">
+                                    <p class="text-muted">No students in this classroom yet</p>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="details" role="tabpanel">
+                                <form id="editClassroomForm">
+                                    <div class="mb-3">
+                                        <label for="editClassroomName" class="form-label">Classroom Name</label>
+                                        <input type="text" class="form-control" id="editClassroomName">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editClassroomSubject" class="form-label">Subject</label>
+                                        <input type="text" class="form-control" id="editClassroomSubject">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editClassroomDescription" class="form-label">Description</label>
+                                        <textarea class="form-control" id="editClassroomDescription" rows="3"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="classroomCode" class="form-label">Classroom Join Code</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="classroomCode" readonly>
+                                            <button class="btn btn-outline-secondary" type="button" id="copyCodeBtn">
+                                                <i class="bi bi-clipboard"></i> Copy
+                                            </button>
+                                            <button class="btn btn-outline-secondary" type="button" id="regenerateCodeBtn">
+                                                <i class="bi bi-arrow-repeat"></i> Regenerate
+                                            </button>
+                                        </div>
+                                        <small class="text-muted">Students can use this code to join your class</small>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger ms-2" id="deleteClassroomBtn">
+                            <i class="bi bi-trash"></i> Delete Classroom
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" id="saveClassroomChangesBtn" class="btn btn-primary">Save Changes</button>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="quizViewModal" class="modal fade" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-white text-black">
+                        <h5 class="modal-title" id="quizViewModalTitle">Quiz Details</h5>
+                        <button type="button" class="btn-close btn-close-gray" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h6 class="card-title text-muted">Average Grade</h6>
+                                        <h3 id="averageGrade" class="text-primary">-</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h6 class="card-title text-muted">Passed Students</h6>
+                                        <h3 id="passedStudents" class="text-success">-</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h6 class="card-title text-muted">Failed Students</h6>
+                                        <h3 id="failedStudents" class="text-danger">-</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h5 class="mb-3">Performance Overview</h5>
+                            <div class="chart-container" style="height: 250px;">
+                                <canvas id="performanceChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h5 class="mb-3">Students Results</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Student Name</th>
+                                            <th>Score</th>
+                                            <th>Grade</th>
+                                            <th>Progress</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="quizResultsTable">
+                                        <!-- Will be populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="../../JS/dashboards/teacher/dashboard.js"></script>
+
+</body>
+</html>

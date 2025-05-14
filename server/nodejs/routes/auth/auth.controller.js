@@ -7,31 +7,38 @@ const JWT_SECRET = process.env.JWT_SECRET ;
 
 // LOGIN
 const login = async (req, res) => {
-    const { email, password, type: userType } = req.body;
+    const { email, password } = req.body;
     const connection = await pool.connect();
 
     try {
         console.log(req.body);
-        let table;
-        if (userType === 'admin') {
-            table = 'admins';
-        } else if (userType === 'teacher') {
-            table = 'teachers';
-        } else if (userType === 'student') {
-            table = 'students';
-        } else {
-            return res.status(400).json({ error: 'Invalid user type' });
-        }
-
-        const result = await connection.query(`SELECT * FROM ${table} WHERE email = $1`, [email]);
-        if (result.rows.length === 0) {
-            return res.status(401).json({ error: 'Invalid credentials' });
-        }
-
-        const user = result.rows[0];
         const hashedPassword = md5(password);
 
-        if (user.password_hash !== hashedPassword) {
+        const userTypes = [
+            { table: 'teachers', type: 'teacher' },
+            { table: 'students', type: 'student' }
+        ];
+
+        let user = null;
+        let userType = null;
+
+        for (const userInfo of userTypes) {
+            const result = await connection.query(
+                `SELECT * FROM ${userInfo.table} WHERE email = $1`,
+                [email]
+            );
+
+            if (result.rows.length > 0) {
+                const foundUser = result.rows[0];
+                if (foundUser.password_hash === hashedPassword) {
+                    user = foundUser;
+                    userType = userInfo.type;
+                    break;
+                }
+            }
+        }
+
+        if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
@@ -62,7 +69,6 @@ const login = async (req, res) => {
         connection.release();
     }
 };
-
 // SIGNUP
 const signup = async (req, res) => {
     const { name, email, password, type: userType } = req.body;

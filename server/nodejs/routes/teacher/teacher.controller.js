@@ -161,7 +161,6 @@ const createClassroom = async (req, res) => {
 const getDashboard = async (req, res) => {
     try {
       const teacherId = req.userID;
-  
       // Execute all queries in parallel
       const [booksResult, classroomsResult, quizzesResult , students_num] = await Promise.all([
         pool.query('SELECT * FROM books WHERE teacher_id = $1', [teacherId]),
@@ -186,7 +185,7 @@ const getDashboard = async (req, res) => {
                   FROM quizzes q
                   JOIN classrooms c ON q.classroom_id = c.id
                   WHERE q.teacher_id = $1
-                    AND q.deadline_date >= NOW()
+                    AND q.deadline_date >= CURRENT_DATE
                   ORDER BY q.deadline_date ASC;`, [teacherId]) , 
         
         pool.query(`SELECT COUNT(DISTINCT cs.student_id) AS student_count
@@ -215,7 +214,8 @@ const getDashboard = async (req, res) => {
           created_at: q.created_at,
           days_left: `${daysLeft} days`,
           duration: q.duration,
-          classroom_name: q.classroom_name
+          classroom_name: q.classroom_name ,
+          deadline_date : q.deadline_date
         };
       });
   
@@ -225,13 +225,14 @@ const getDashboard = async (req, res) => {
         classrooms: classrooms,
         quizzes: quizzes
       });
-    } catch (err) {
+    }
+     catch (err) {
       console.error('Error fetching dashboard data:', err);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   };
 
-  const updateClassroom = async (req, res) => {
+const updateClassroom = async (req, res) => {
     try {
       const {classroom_id} = req.params;
       const { name, subject , description , joinCode } = req.body;
@@ -244,7 +245,7 @@ const getDashboard = async (req, res) => {
       );
   
       if (check.rowCount === 0) {
-        return res.status(403).json({ message: 'Unauthorized: You do not own this classroom' });
+        return res.status(403).json({ error: 'Unauthorized: You do not own this classroom' });
       }
   
       // Step 2: Update the classroom
@@ -267,8 +268,118 @@ const getDashboard = async (req, res) => {
     }
   };
 
+const updateQuiz = async (req, res) => {
+    try {
+      const teacher_id = req.userID; 
+      const { quiz_id } = req.params;
+      const { title, classroom, date } = req.body;
+  
+      // Check if the teacher owns the quiz
+      const check = await pool.query(
+        'SELECT * FROM quizzes WHERE teacher_id = $1 AND quiz_id = $2', 
+        [teacher_id, quiz_id]
+      );
+  
+      if (check.rowCount === 0) {
+        return res.status(403).json({
+          error: "Unauthorized: You don't own this quiz"
+        });
+      }
+  
+      // Update the quiz
+      const update = await pool.query(`
+        UPDATE quizzes 
+        SET title = $1, classroom_id = $2, deadline_date = $3 
+        WHERE quiz_id = $4 
+        RETURNING *;
+      `, [title, classroom, date, quiz_id]);
+  
+      res.status(200).json({
+        message: 'Quiz updated successfully',
+        updatedQuiz: update.rows[0]
+      });
+  
+    } catch (error) {
+      console.error('Error updating quiz:', error);
+      res.status(500).json({ message: 'Error updating quiz', error: error.message });
+    }
+  }
 
+const deleteClassroom = async (req, res) => {
+    try {
+      const teacher_id = req.userID;
+      const { classroom_id } = req.params;
+  
+      // Check if the classroom belongs to the teacher
+      const check = await pool.query(
+        'SELECT * FROM classrooms WHERE id = $1 AND teacher_id = $2',
+        [classroom_id, teacher_id]
+      );
+  
+      if (check.rowCount === 0) {
+        return res.status(403).json({
+          error: "Unauthorized: You don't own this classroom",
+        });
+      }
+  
+      // Delete the classroom
+      await pool.query('DELETE FROM classrooms WHERE id = $1', [classroom_id]);
+  
+      res.status(200).json({
+        message: 'Classroom deleted successfully',
+      });
+    } catch (error) {
+      console.error('Error deleting classroom:', error);
+      res.status(500).json({
+        message: 'Error deleting classroom',
+        error: error.message,
+      });
+    }
+  };
 
+const getQuizAnalysis = async (req, res) => {
+    try {
+      const { quiz_id } = req.params
+  
+      const analysisQuery = `
+        SELECT 
+          s.id AS studentId,
+          s.name,
+          sqa.score,
+          CASE 
+            WHEN sqa.score >= 97 THEN 'A+'
+            WHEN sqa.score >= 93 THEN 'A'
+            WHEN sqa.score >= 90 THEN 'A-'
+            WHEN sqa.score >= 87 THEN 'B+'
+            WHEN sqa.score >= 83 THEN 'B'
+            WHEN sqa.score >= 80 THEN 'B-'
+            WHEN sqa.score >= 77 THEN 'C+'
+            WHEN sqa.score >= 73 THEN 'C'
+            WHEN sqa.score >= 70 THEN 'C-'
+            WHEN sqa.score >= 60 THEN 'D'
+            ELSE 'F'
+          END AS grade
+        FROM student_quiz_attempts sqa
+        JOIN students s ON sqa.student_id = s.id
+        WHERE sqa.quiz_id = $1 AND sqa.completed_at IS NOT NULL
+        ORDER BY sqa.score DESC
+      `;
+  
+      const result = await pool.query(analysisQuery, [quiz_id]);
+  
+      const analysis = result.rows.map(row => ({
+        studentId: row.studentid,
+        name: row.name,
+        score: `${row.score}%`,
+        grade: row.grade
+      }));
+  
+      res.status(200).json({ results: analysis });
+    } catch (error) {
+      console.error('Error fetching quiz analysis:', error);
+      res.status(500).json({ message: 'Error fetching quiz analysis', error: error.message });
+    }
+  };
 
 
 
@@ -281,5 +392,8 @@ getDashboard ,
 getClassroom , 
 kickStudent ,
 deleteBook , 
-updateClassroom
+updateClassroom , 
+updateQuiz , 
+deleteClassroom , 
+getQuizAnalysis
 };

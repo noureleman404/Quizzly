@@ -30,7 +30,7 @@ load_dotenv()
 # )
 # conn.commit()
 
-def load_pdf (uploadFile: UploadFile , cursor , conn , teacher_id , subject , description , author) :
+def load_pdf (uploadFile: UploadFile , cursor , conn , teacher_id , subject , description , author ) :
     doc = fitz.open(stream=uploadFile.file.read() , filetype="pdf")
     cursor.execute(
         "INSERT INTO books (title , teacher_id , subject , description , pages , author) VALUES (%s , %s , %s , %s , %s , %s) RETURNING id",

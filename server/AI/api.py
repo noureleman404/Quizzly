@@ -41,6 +41,8 @@ class generateRequest(BaseModel):
     endPage: int
     title:str
     deadline_date:date
+    personalized:bool
+    duration: int
     
 
 @app.post("/UploadBook")
@@ -106,10 +108,9 @@ async def generateQuiz(
                       teacher_id=payload["id"] , 
                       title=requestData.title , 
                       deadline_date=requestData.deadline_date , 
-                      quizzes=quizzes)
-        #-> Assign Quiz to the ClassRoom
-        
-        #->   
+                      quizzes=quizzes, 
+                      duration=requestData.duration)
+
         print_quiz(quizzes)
         
     except Exception as e:
