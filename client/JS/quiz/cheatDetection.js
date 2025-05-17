@@ -46,6 +46,7 @@ faceMesh.onResults((results) => {
     if (faceCount > 1) {
       console.error("🚨 Multiple faces detected!");
       showWebcamStatus("Multiple faces!", "paused");
+      registerViolation("Many faces detected ");
       return;
     }
   

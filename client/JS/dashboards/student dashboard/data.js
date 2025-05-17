@@ -26,7 +26,10 @@ async function loadDashboardData() {
         };
         return studentData;
     } catch (error) {
+        window.location.href = '../../index.html';
         console.error('Dashboard load error:', error);
+        localStorage.removeItem('token');
+        localStorage.removeItem('currentUser');
         throw error;
     }
 }

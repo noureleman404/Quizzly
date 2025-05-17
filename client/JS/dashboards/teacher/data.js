@@ -28,7 +28,10 @@ async function loadDashboardData() {
         };
         return teacherData;
     } catch (error) {
+        window.location.href = '../../index.html';
         console.error('Dashboard load error:', error);
+        localStorage.removeItem('token');
+        localStorage.removeItem('currentUser');
         throw error;
     }
 }

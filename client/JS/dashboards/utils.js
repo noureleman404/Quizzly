@@ -19,6 +19,7 @@ export function generateClassCode() {
 
 export function handleLogout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('currentUser');
     window.location.href = '../index.html';
 }
 export function showGlobalLoading(show) {

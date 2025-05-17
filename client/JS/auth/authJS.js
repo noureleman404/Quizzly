@@ -131,11 +131,58 @@ document.addEventListener('DOMContentLoaded', () => {
     if (form === forms.login) {
       await attemptLogin(data.loginEmail, data.loginPassword);
     }
+    if(form === forms.signup){
+      if (form === forms.signup) {
+        await attemptSignup(data.name, data.email, data.password, data.role);
+
+      }
+    }
 
     submitBtn.disabled = false;
     submitBtn.innerHTML = defaultText;
   };
+const attemptSignup = async (name, email, password, type) => {
+    const errorEl = document.getElementById('loginError');
+    const btn = document.querySelector('#loginForm button[type="submit"]');
 
+    try {
+      const res = await fetch('http://localhost:3000/auth/register', {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password , name , type })
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem('token', result.token);
+        localStorage.setItem('currentUser', JSON.stringify({
+          id: result.user.id,
+          name: result.user.name,
+          email: result.user.email,
+          role: result.user.type,
+          isLoggedIn: true
+        }));
+
+        const redirectMap = {
+          teacher: '../../Pages/teacher/teacherView.html',
+          student: '../../Pages/student/studentView.html',
+          admin: 'dashboard.html'
+        };
+
+        window.location.href = redirectMap[result.user.type] || '/';
+      } else {
+        errorEl.textContent = result.error || 'Login failed';
+        errorEl.classList.remove('d-none');
+        btn.disabled = false;
+      }
+    } catch (err) {
+      console.error('Signup error:', err);
+      errorEl.textContent = 'Something went wrong. Please try again.';
+      errorEl.classList.remove('d-none');
+      btn.disabled = false;
+    }
+  };
   const attemptLogin = async (email, password) => {
     const errorEl = document.getElementById('loginError');
     const btn = document.querySelector('#loginForm button[type="submit"]');
