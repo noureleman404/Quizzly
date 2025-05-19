@@ -3,7 +3,7 @@ const md5 = require('md5');
 const { pool } = require('../../databaseConf');
 require('dotenv').config();
 
-const JWT_SECRET = process.env.JWT_SECRET ;
+const JWT_SECRET = "123";
 
 // LOGIN
 const login = async (req, res) => {

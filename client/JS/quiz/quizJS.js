@@ -1,5 +1,3 @@
-
-// // Quiz Data - This would come from backend in production
 // const quizData = {
 //     id: "quiz123",
 //     title: "Cell Structure and Function",
@@ -42,14 +40,7 @@
 //         },
 //         {
 //             id: 4,
-//             text: "The cell theory states that:",
-//             options: [
-//                 "All cells arise from pre-existing cells",
-//                 "The cell is the basic unit of life",
-//                 "All living things are composed of cells",
-//                 "All of the above"
-//             ],
-//             correctAnswer: 3 // (All of the above)
+//             text: "The cell theory states that:", //short answer question
 //         },
 //         {
 //             id: 5,
@@ -66,7 +57,7 @@
 // };
 
 
-let quizData = null;
+// let quizData = null;
 let timeLeft = null;
 // Global variables
 let currentQuestion = 0;
@@ -82,7 +73,7 @@ document.addEventListener('DOMContentLoaded',async function() {
     const params = new URLSearchParams(window.location.search);
     const quizId = params.get('id');
     if (quizId) {
-        // Call your API with quizId
+        // Call API with quizId
         const token = localStorage.getItem('token');
         const response = await fetch('http://localhost:3000/student/start-quiz', {
             method: 'POST',
@@ -115,7 +106,7 @@ document.addEventListener('DOMContentLoaded',async function() {
     document.getElementById('summaryTimeLimit').textContent = `${quizData.timeLimit} minutes`;
     document.getElementById('modalTotal').textContent = quizData.questions.length;
     
-    // Setup webcam first - this is required for the quiz
+    // Setup webcam first 
     setupWebcamModal();
 
     // Initialize question navigation
@@ -230,8 +221,18 @@ function updateQuestionNavigation() {
         if (index === currentQuestion) {
             btn.classList.add('active');
         } else {
+            const question = quizData.questions[index];
             if (selectedAnswers[index] !== undefined) {
-                btn.classList.add('answered');
+                // For short answer questions, check if answer is not empty
+                if (!question.options || question.options.length === 0) {
+                    if (selectedAnswers[index] && selectedAnswers[index].trim() !== '') {
+                        btn.classList.add('answered');
+                    } else {
+                        btn.classList.add('btn-outline-secondary');
+                    }
+                } else {
+                    btn.classList.add('answered');
+                }
             } else {
                 btn.classList.add('btn-outline-secondary');
             }
@@ -263,25 +264,41 @@ function loadQuestion(index) {
     const optionsContainer = document.getElementById('options-container');
     optionsContainer.innerHTML = '';
     
-    question.options.forEach((option, optionIndex) => {
-        const isSelected = selectedAnswers[index] === optionIndex;
-        
-        const optionDiv = document.createElement('div');
-        optionDiv.className = `quiz-option ${isSelected ? 'selected' : ''}`;
-        optionDiv.onclick = () => selectAnswer(index, optionIndex);
-        
-        optionDiv.innerHTML = `
-            <div class="d-flex align-items-center">
-                <div class="me-3 rounded-circle border d-flex align-items-center justify-content-center" 
-                     style="width: 24px; height: 24px; ${isSelected ? 'border-color: var(--primary-purple); background-color: var(--primary-purple); color: white;' : ''}">
-                    ${isSelected ? '✓' : ''}
+    // Check if this is a short answer question 
+    if (!question.options || question.options.length === 0) {
+        // Create textarea for short answer
+        const textarea = document.createElement('textarea');
+        textarea.className = 'form-control short-answer-input mt-3';
+        textarea.rows = 4;
+        textarea.placeholder = 'Type your answer here...';
+        textarea.value = selectedAnswers[index] || '';
+        textarea.addEventListener('input', (e) => {
+            selectedAnswers[index] = e.target.value;
+            updateQuizSummary();
+        });
+        optionsContainer.appendChild(textarea);
+    } else {
+        // Regular MCQ question
+        question.options.forEach((option, optionIndex) => {
+            const isSelected = selectedAnswers[index] === optionIndex;
+            
+            const optionDiv = document.createElement('div');
+            optionDiv.className = `quiz-option ${isSelected ? 'selected' : ''}`;
+            optionDiv.onclick = () => selectAnswer(index, optionIndex);
+            
+            optionDiv.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <div class="me-3 rounded-circle border d-flex align-items-center justify-content-center" 
+                         style="width: 24px; height: 24px; ${isSelected ? 'border-color: var(--primary-purple); background-color: var(--primary-purple); color: white;' : ''}">
+                        ${isSelected ? '✓' : ''}
+                    </div>
+                    <span>${option}</span>
                 </div>
-                <span>${option}</span>
-            </div>
-        `;
-        
-        optionsContainer.appendChild(optionDiv);
-    });
+            `;
+            
+            optionsContainer.appendChild(optionDiv);
+        });
+    }
     
     // Update navigation buttons
     document.getElementById('prevButton').disabled = index === 0;
@@ -318,7 +335,20 @@ function goToNextQuestion() {
 
 // Update quiz summary information
 function updateQuizSummary() {
-    const answeredCount = Object.keys(selectedAnswers).length;
+    let answeredCount = 0;
+    
+    quizData.questions.forEach((question, index) => {
+        if (selectedAnswers[index] !== undefined) {
+            // For short answer questions, only count if answer is not empty
+            if (!question.options || question.options.length === 0) {
+                if (selectedAnswers[index] && selectedAnswers[index].trim() !== '') {
+                    answeredCount++;
+                }
+            } else {
+                answeredCount++;
+            }
+        }
+    });
     
     document.getElementById('summaryAnswered').textContent = answeredCount;
     document.getElementById('modalAnswered').textContent = answeredCount;
@@ -376,18 +406,25 @@ async function submitQuiz() {
 
 // Start the quiz timer
 function startTimer() {
+    // Clear any existing timer first
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
+    
+    // Add validation check
+    if (timeLeft <= 0) {
+        console.error("Cannot start timer with zero or negative time");
+        timeLeft = quizData.timeLimit * 60; // reset to default
+    }
+    
+    // Update display immediately
+    updateTimerDisplay();
+    
+    // Then start the interval
     timerInterval = setInterval(() => {
         timeLeft--;
+        updateTimerDisplay();
         
-        // Update timer displays
-        const minutes = Math.floor(timeLeft / 60);
-        const seconds = timeLeft % 60;
-        const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        
-        document.getElementById('timer').textContent = formattedTime;
-        document.getElementById('summaryTimer').textContent = formattedTime;
-        
-        // Handle timer ending
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
             alert("Time's up! Your quiz will be submitted automatically.");
@@ -402,9 +439,17 @@ function startTimer() {
     }, 1000);
 }
 
+function updateTimerDisplay() {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    document.getElementById('timer').textContent = formattedTime;
+    document.getElementById('summaryTimer').textContent = formattedTime;
+}
+
 // Handle logout
 function handleLogout() {
-    // In a real application, this would clear session data, tokens, etc.
     if (confirm("Are you sure you want to log out? Your quiz progress will be lost.")) {
         // Stop recording if active
         if (mediaRecorder && mediaRecorder.state !== 'inactive') {
@@ -420,7 +465,3 @@ function handleLogout() {
         window.location.href = 'index.html';
     }
 }
-
-// Handle page unload/refresh attempts
-
-

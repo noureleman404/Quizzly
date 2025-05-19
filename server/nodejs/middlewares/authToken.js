@@ -8,7 +8,7 @@ const verifyToken = (req, res, next) => {
         return res.status(403).json({ error: 'No token provided' });
     }
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    jwt.verify(token, "123", (err, decoded) => {
         if (err) {
             console.log(err)
             return res.status(401).json({ message: "UnAuthorized !" });

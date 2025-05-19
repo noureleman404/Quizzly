@@ -2,7 +2,6 @@
 :root {
   --primary-purple: #8B5CF6;
   --primary-pink: #D946EF;
-  --primary-orange: #F97316;
   --primary-blue: #0EA5E9;
   --gray-50: #F9FAFB;
   --gray-100: #F3F4F6;
@@ -248,4 +247,10 @@ body {
   .timer-container {
     margin-top: 15px;
   }
+}
+
+.short-answer-input {
+    margin-top: 15px;
+    resize: vertical;
+    min-height: 100px;
 }
