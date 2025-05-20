@@ -1,0 +1,526 @@
+.dashboard-container {
+  padding: 2rem 0;
+}
+
+.logged-in .logged-out-buttons,
+.logged-out .user-info {
+  display: none !important;
+}
+
+#Upcoming-Quizzes-State{
+  border-left: 4px solid var(--purple);
+}
+
+#Enrolled-Classes-State{
+  border-left: 4px solid var(--pink) !important;
+}
+
+#Completed-Quizzes-State{
+  border-left: 4px solid var(--blue) !important;
+}
+
+#TS-state{
+  border-left: 4px solid var(--purple);
+}
+
+#Classroom-state{
+  border-left: 4px solid var(--pink);
+}
+
+#UQ-state{
+  border-left: 4px solid var(--blue);
+}
+
+.stats-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+  transition: transform 0.2s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-3px);
+}
+
+.stats-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.stats-card p {
+  color: var(--gray-500);
+  margin-bottom: 0;
+}
+
+.empty-state {
+  display: none !important; 
+}
+
+.dashboard-content.active .empty-state {
+  display: none !important;
+}
+
+/* When content exists, hide empty state */
+.dashboard-content.active:has(.quiz-card) .empty-state,
+.dashboard-content.active:has(tr) .empty-state,
+.dashboard-content.active:has(.card:not(.border-dashed)) .empty-state {
+  display: none !important;
+}
+
+.dashboard-tab {
+  padding: 1rem 1.5rem;
+  font-weight: 500;
+  color: var(--gray-600);
+  border: none;
+  background: none;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dashboard-tab:hover {
+  color: var(--purple);
+}
+
+.dashboard-tab.active {
+  color: var(--purple);
+  border-bottom: 2px solid var(--purple);
+}  
+
+.dashboard-content {
+  padding: 1.5rem 0;
+ 
+}
+
+.dashboard-content.active {
+  display: block;
+}
+
+.classroom-card {
+  background: white;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.classroom-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.classroom-card .card-header {
+  background: linear-gradient(135deg, var(--purple), var(--primary-blue));
+  color: white;
+  padding: 1rem;
+  font-weight: 600;
+}
+
+.classroom-card .card-body {
+  padding: 1.25rem;
+}
+
+.classroom-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+
+.classroom-card .badge {
+  background-color: rgba(139, 92, 246, 0.1);
+  color: var(--purple);
+  font-weight: 500;
+}
+
+#create-classroom-card {
+  border: 2px dashed var(--gray-300) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+#joinClassCard{
+  border: 2px dashed var(--gray-300) !important;
+  border-radius: 15px;
+}
+
+.card-border-dashed:hover {
+  border-color: var(--purple) !important;
+  background-color: rgba(139, 92, 246, 0.05) !important;
+}
+
+#file-upload-area {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#file-upload-area:hover {
+  border-color: var(--purple);
+  background-color: rgba(139, 92, 246, 0.05);
+}
+
+.class-details-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.class-details-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.class-modal-content {
+    background: white;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.class-details-modal.show .class-modal-content {
+    transform: translateY(0);
+}
+
+.class-modal-header {
+  background: white;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.class-modal-header h3 {
+  background-image: linear-gradient(to right, var(--purple), var(--pink));
+  background-clip: text;
+  color: transparent;
+  font-weight: 600;
+  margin: 0;
+}
+
+.class-modal-close {
+  background: transparent;
+  border: none;
+  color: rgb(91, 91, 91);
+  font-size: 1.25rem;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.class-modal-close:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.class-modal-body {
+  padding: 1.5rem;
+}
+
+.class-detail-item {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: var(--gray-700);
+  font-size: 0.9rem;
+}
+
+.detail-value {
+  color: var(--gray-600);
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .class-modal-content {
+    width: 95%;
+  }
+}
+
+/* Quiz Review Modal Styles */
+.quiz-review-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1050;
+    padding: 1rem;
+}
+
+.quiz-review-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.quiz-review-content {
+    background: white;
+    border-radius: 0.5rem;
+    width: 100%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.quiz-review-modal.show .quiz-review-content {
+    transform: translateY(0);
+}
+
+.quiz-review-header {
+    padding: 1.25rem;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.quiz-review-header h3{
+  background-image: linear-gradient(to right, var(--purple), var(--pink));
+  background-clip: text;
+  color: transparent;
+}
+
+.quiz-review-body {
+    padding: 1.25rem;
+}
+
+/* Question Card Styles */
+.question-card {
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+    background-color: #f8f9fa;
+}
+
+.question-card.correct {
+    border-left: 4px solid #28a745;
+}
+
+.question-card.incorrect {
+    border-left: 4px solid #dc3545;
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.question-text {
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    background-color: white;
+    border: 1px solid #dee2e6;
+}
+
+.option-letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    margin-right: 0.75rem;
+    font-weight: bold;
+}
+
+.correct-answer {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-color: #28a745;
+}
+
+.correct-answer .option-letter {
+    background-color: #28a745;
+    color: white;
+}
+
+.incorrect-answer {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-color: #dc3545;
+}
+
+.incorrect-answer .option-letter {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .quiz-review-content {
+        max-height: 80vh;
+    }
+    
+    .question-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+
+/* Page range input styling */
+.page-range-container {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.page-range-input {
+  width: 120px;
+}
+
+.page-range-separator {
+  font-weight: bold;
+  color: #6c757d;
+}
+
+#generateQuizBtn{
+  width: 100% !important;
+}
+
+/* Custom Checkbox Styles */
+.custom-checkbox-container {
+    position: relative;
+    margin-top: 1rem;
+}
+
+.custom-checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 500;
+    color: #4b5563;
+    position: relative;
+}
+
+.custom-checkbox-input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.custom-checkbox {
+    top: 0;
+    left: 0;
+    height: 1.5rem;
+    width: 1.5rem;
+    border: 2px solid transparent;
+    border-radius: 0.375rem;
+    background-color: white;
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    transition: all 0.2s ease;
+}
+
+.custom-checkbox-input:not(:checked) + .custom-checkbox {
+    background-image: 
+        linear-gradient(white, white), 
+        linear-gradient(to right, #8B5CF6, #D946EF, #0EA5E9);
+}
+
+.custom-checkbox-input:checked + .custom-checkbox {
+    background-color: #6366f1;
+    background-image: none;
+    border-color: #6366f1;
+}
+
+.custom-checkbox:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 0.5rem;
+    top: 0.25rem;
+    width: 0.375rem;
+    height: 0.75rem;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.custom-checkbox-input:checked + .custom-checkbox:after {
+    display: block;
+}
+
+.custom-checkbox-input:focus + .custom-checkbox {
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.custom-checkbox-label:hover .custom-checkbox-input:not(:checked) + .custom-checkbox {
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .page-range-container {
+      flex-direction: column;
+      align-items: flex-start;
+  }
+  
+  .page-range-input {
+      width: 100%;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-tab {
+      padding: 0.75rem;
+      font-size: 0.9rem;
+  }
+  
+  .stats-card {
+      padding: 1rem;
+  }
+  
+  .classroom-card {
+      margin-bottom: 1rem;
+  }
+}
