@@ -524,3 +524,9 @@
       margin-bottom: 1rem;
   }
 }
+
+.modal-header h5{
+  background-image: linear-gradient(to right, var(--purple), var(--pink));
+  background-clip: text;
+  color: transparent;
+}

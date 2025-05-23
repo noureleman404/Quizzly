@@ -124,6 +124,7 @@ function showManageClassroomModal(classroomId) {
 
     // Populate the student list
     populateStudentsTable(classroomId);
+    populatePastQuizzes(classroomId);
 
     // Show the modal
     manageClassroomModal.show();
@@ -181,6 +182,154 @@ async function populateStudentsTable(classroomId) {
         });
     });
 }
+
+function populatePastQuizzes(classroomId) {
+    const pastQuizzesList = document.getElementById('pastQuizzesList');
+    const noPastQuizzes = document.getElementById('noPastQuizzes');
+    
+    pastQuizzesList.innerHTML = '';
+
+    // Filter quizzes for this classroom
+    const classroomQuizzes = teacherData.pastQuizzes.filter(
+        quiz => quiz.classroom_id === classroomId
+    );
+
+    if (classroomQuizzes.length === 0) {
+        noPastQuizzes.classList.remove('d-none');
+        return;
+    }
+
+    noPastQuizzes.classList.add('d-none');
+
+    classroomQuizzes.forEach(quiz => {
+        const row = document.createElement('tr');
+        const quizDate = new Date(quiz.deadline_date);
+        const formattedDate = quizDate.toLocaleDateString();
+
+        row.innerHTML = `
+            <td>${quiz.title}</td>
+            <td>${formattedDate}</td>
+            <td>${quiz.average_score || 'N/A'}</td>
+            <td>
+                <button class="btn btn-sm btn-primary view-past-quiz-btn" 
+                        data-quiz-id="${quiz.quiz_id}">
+                    View Results
+                </button>
+            </td>
+        `;
+        pastQuizzesList.appendChild(row);
+    });
+
+    document.querySelectorAll('.view-past-quiz-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const quizId = parseInt(button.getAttribute('data-quiz-id'));
+            viewPastQuiz(quizId);
+        });
+    });
+}
+
+async function viewPastQuiz(quizId) {
+    // Reuse the same view functionality as upcoming quizzes
+    const quiz = teacherData.pastQuizzes.find(q => q.quiz_id === quizId);
+    if (!quiz) return;
+    const token = localStorage.getItem('token');
+
+    const response = await fetch(`http://localhost:3000/teacher/quiz/${quizId}/results`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        } 
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to get quiz results');
+    }
+    
+    const data = await response.json();
+    const results = data.results;
+
+    // Same display logic as upcoming quizzes
+    const totalStudents = results.length;
+    const passedStudents = results.filter(r => r.grade && ['A', 'B', 'C'].includes(r.grade[0])).length;
+    const failedStudents = totalStudents - passedStudents;
+    const averageScore = results.length ? 
+        (results.reduce((sum, r) => sum + parseInt(r.score), 0) / results.length).toFixed(1) + '%' : 
+        'N/A';
+
+    // Update modal content - use the same modal as upcoming quizzes
+    document.getElementById('quizViewModalTitle').textContent = quiz.title;
+    document.getElementById('averageGrade').textContent = averageScore;
+    document.getElementById('passedStudents').textContent = passedStudents;
+    document.getElementById('failedStudents').textContent = failedStudents;
+    
+    // Add a back button to the modal header
+    const modalHeader = document.querySelector('#quizViewModal .modal-header');
+    if (!modalHeader.querySelector('.back-to-past-quizzes')) {
+        modalHeader.insertAdjacentHTML('afterbegin', `
+            <button type="button" class="btn btn-sm btn-outline-secondary me-2 back-to-past-quizzes">
+                <i class="bi bi-arrow-left"></i> Back
+            </button>
+        `);
+    }
+
+    // Populate results table
+    document.getElementById('quizResultsTable').innerHTML = results.map(student => `
+        <tr>
+            <td>${student.name}</td>
+            <td>${student.score}</td>
+            <td><span class="badge ${getGradeColorClass(student.grade)}">${student.grade}</span></td>
+            <td>
+                <div class="progress" style="height: 6px;">
+                    <div class="progress-bar ${student.grade[0] <= 'C' ? 'bg-success' : 'bg-danger'}" 
+                         style="width: ${student.score.replace('%', '')}%"></div>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+
+    // Chart logic (same as upcoming quizzes)
+    const chartCanvas = document.getElementById('performanceChart');
+    if (chartCanvas) {
+        const ctx = chartCanvas.getContext('2d');
+        
+        if (chartCanvas.chart) {
+            chartCanvas.chart.destroy();
+        }
+        
+        chartCanvas.chart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Passed', 'Failed'],
+                datasets: [{
+                    data: [passedStudents, failedStudents],
+                    backgroundColor: ['#28a745', '#dc3545'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    // Add back button functionality
+    document.querySelector('.back-to-past-quizzes').addEventListener('click', () => {
+        bootstrap.Modal.getInstance('#quizViewModal').hide();
+        // Switches back to Past Quizzes tab
+        document.querySelector('#pastQuizzes-tab').click();
+    });
+
+    // Show modal
+    new bootstrap.Modal('#quizViewModal').show();
+}
+
 async function removeStudent(classroomId, studentId) {
     
     const token = localStorage.getItem('token');
@@ -317,5 +466,6 @@ export {
     showManageClassroomModal,
     handleCreateClassroom,
     handleSaveClassroomChanges,
-    currentClassroom
+    currentClassroom,
+    populatePastQuizzes
 };

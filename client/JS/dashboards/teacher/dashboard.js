@@ -13,7 +13,7 @@ import { handleLogout, showGlobalLoading, switchToTab } from '../utils.js';
 document.addEventListener('DOMContentLoaded', async function() {
     try {
         // showGlobalLoading(true);
-        showGlobalLoading(true);
+        showGlobalLoading(true); 
         await loadDashboardData();
         showGlobalLoading(false);
         // Initialize Bootstrap modals
@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         
         // Add event listeners for classroom actions
         document.getElementById('newClassroomBtn').addEventListener('click', showCreateClassroomModal);
+        document.getElementById('scheduleQuizBtn').addEventListener('click', () => switchToTab('create'));
         document.getElementById('saveClassroomBtn').addEventListener('click', handleCreateClassroom);
         document.getElementById('generateQuizBtn').addEventListener('click', handleGenerateQuiz);
         document.getElementById('uploadBookBtn').addEventListener('click', handleUploadBook);
@@ -72,7 +73,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 handleFileSelection(e.target.files[0]);
             }
         });
-        
+         
         
     } catch (error) {
         console.log(localStorage.getItem("token"))
