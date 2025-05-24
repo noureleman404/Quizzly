@@ -251,7 +251,7 @@ async function viewPastQuiz(quizId) {
 
     // Same display logic as upcoming quizzes
     const totalStudents = results.length;
-    const passedStudents = results.filter(r => r.grade && ['A', 'B', 'C'].includes(r.grade[0])).length;
+    const passedStudents = results.filter(r => r.grade && ['A', 'B', 'C', 'D'].includes(r.grade[0])).length;
     const failedStudents = totalStudents - passedStudents;
     const averageScore = results.length ? 
         (results.reduce((sum, r) => sum + parseInt(r.score), 0) / results.length).toFixed(1) + '%' : 
@@ -281,7 +281,7 @@ async function viewPastQuiz(quizId) {
             <td><span class="badge ${getGradeColorClass(student.grade)}">${student.grade}</span></td>
             <td>
                 <div class="progress" style="height: 6px;">
-                    <div class="progress-bar ${student.grade[0] <= 'C' ? 'bg-success' : 'bg-danger'}" 
+                    <div class="progress-bar ${student.grade[0] <= 'D' ? 'bg-success' : 'bg-danger'}" 
                          style="width: ${student.score.replace('%', '')}%"></div>
                 </div>
             </td>
