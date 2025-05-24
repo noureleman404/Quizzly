@@ -168,4 +168,4 @@ Please see [`docs/contributors_guide.md`](./docs/contributors_guide.md) for guid
 
 ## 📬 Contact
 
-Maintained by [Mohamed Sherif](mailto:mohamed.ms5517@gmail.com)  , [Nour E.Mustafa](mailto:https://www.linkedin.com/in/nour-e-mostafa-49a290216/) 
+Maintained by [Mohamed Sherif](mailto:mohamed.ms5517@gmail.com)  , [Nour E. Mostafa](mailto:https://www.linkedin.com/in/nour-e-mostafa-49a290216/) 
