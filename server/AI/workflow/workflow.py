@@ -57,7 +57,7 @@ def fetch_chunks_in_range(book_id, start_page, end_page):
 def generate_quiz_from_content(content , num_questions):
     
     prompt_template = """
-You are a highly skilled AI assistant. Your task is to generate exactly {num_questions} multiple-choice questions (MCQs) based on the following content.
+You are a highly skilled AI assistant. Your task is to generate exactly {num_questions} multiple-choice questions (MCQs) and 2 short answer questions based on the following content.
 
 -- START OF CONTENT --
 {text}
@@ -71,6 +71,11 @@ Generate {num_questions} MCQs using this strict format for each question:
 4. **C.** Option C  
 5. **D.** Option D  
 6. **Correct Answer:** A/B/C/D
+
+Generate 2 SAQs using this strict format for each question:
+
+1. **Question:** Your question here  
+6. **Correct Answer:** your correct answer
 
 Rules:
 - Do not include anything outside this format.
@@ -91,36 +96,48 @@ Rules:
         return None
 
 def parse_and_save_quiz(quiz_content):
+    # print(quiz_content)
     pattern = re.compile(r"""
-
-    \d+\.\s*\*\*Question:\*\*\s*(?P<question>.*?)\n
-    2\.\s*\*\*A\.\*\*\s*(?P<A>.*?)\n
-    3\.\s*\*\*B\.\*\*\s*(?P<B>.*?)\n
-    4\.\s*\*\*C\.\*\*\s*(?P<C>.*?)\n
-    5\.\s*\*\*D\.\*\*\s*(?P<D>.*?)\n
-    6\.\s*\*\*Correct\s*Answer:\*\*\s*(?P<correct>[A-D])
+        (?P<number>\d+)\.\s*\*\*Question:\*\*\s*(?P<question>.*?)\n
+        (?:
+            (?:\d+\.\s*\*\*A\.\*\*\s*(?P<A>.*?)\n)?
+            (?:\d+\.\s*\*\*B\.\*\*\s*(?P<B>.*?)\n)?
+            (?:\d+\.\s*\*\*C\.\*\*\s*(?P<C>.*?)\n)?
+            (?:\d+\.\s*\*\*D\.\*\*\s*(?P<D>.*?)\n)?
+        )?
+        \d+\.\s*\*\*Correct\s*Answer:\*\*\s*(?P<answer>.*?)(?=\n\d+\.|\Z)
     """, re.VERBOSE | re.DOTALL)
+
+    quizzes = []
 
     try:
         matches = pattern.finditer(quiz_content)
-        quizzes = []
         
         for match in matches:
-            quiz_data = match.groupdict()
-            quizzes.append({
-                'question': quiz_data['question'].strip(),
-                'options': {
-                    'A': quiz_data['A'].strip(),
-                    'B': quiz_data['B'].strip(),
-                    'C': quiz_data['C'].strip(),
-                    'D': quiz_data['D'].strip(),
-                },
-                'correct_answer': quiz_data['correct']
-            })
+            data = match.groupdict()
+            question = data['question'].strip()
+            answer = data['answer'].strip()
+
+            # Determine if it's multiple-choice or open-ended
+            if all(data.get(opt) for opt in ['A', 'B', 'C', 'D']):
+                quizzes.append({
+                    'question': question,
+                    'options': {
+                        'A': data['A'].strip(),
+                        'B': data['B'].strip(),
+                        'C': data['C'].strip(),
+                        'D': data['D'].strip(),
+                    },
+                    'correct_answer': answer
+                })
+            else:
+                quizzes.append({
+                    'question': question,
+                    'correct_answer': answer
+                })
 
         if not quizzes:
             raise ValueError("No valid quizzes parsed from the content.")
-        
         return quizzes
 
     except Exception as e:
@@ -155,10 +172,11 @@ def print_quiz(quizzes):
         print(f"\n=== Quiz Set {quiz_index} ===\n")
         for q_num, quiz in enumerate(quiz_set, start=1):
             print(f"Q{q_num}: {quiz['question']}")
-            print(f"  A. {quiz['options']['A']}")
-            print(f"  B. {quiz['options']['B']}")
-            print(f"  C. {quiz['options']['C']}")
-            print(f"  D. {quiz['options']['D']}")
+            if(quiz.get('options')):
+                print(f"  A. {quiz['options']['A']}")
+                print(f"  B. {quiz['options']['B']}")
+                print(f"  C. {quiz['options']['C']}")
+                print(f"  D. {quiz['options']['D']}")
             print(f"  [Correct Answer: {quiz['correct_answer']}]\n")
 
 def store_quizzes(
@@ -195,12 +213,12 @@ def store_quizzes(
         conn.rollback()
         print("Error storing quiz:", e)
         raise
-# if __name__ == "__main__":
-#     book_id = 9
-#     start_page = 10
-#     end_page = 50
-#     quizzes = generate_quiz(book_id, start_page, end_page, num_quizzes=1 ,questionsNum=7)
-#     print_quiz(quizzes)
+if __name__ == "__main__":
+    book_id = 16
+    start_page = 10
+    end_page = 50
+    quizzes = generate_quiz(book_id, start_page, end_page, num_quizzes=1 ,questionsNum=7)
+    print_quiz(quizzes)
 
-#     cursor.close()
-#     conn.close()
+    cursor.close()
+    conn.close()

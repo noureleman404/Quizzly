@@ -263,7 +263,7 @@ function loadQuestion(index) {
     // Generate options
     const optionsContainer = document.getElementById('options-container');
     optionsContainer.innerHTML = '';
-    
+
     // Check if this is a short answer question 
     if (!question.options || question.options.length === 0) {
         // Create textarea for short answer
@@ -280,6 +280,7 @@ function loadQuestion(index) {
     } else {
         // Regular MCQ question
         question.options.forEach((option, optionIndex) => {
+
             const isSelected = selectedAnswers[index] === optionIndex;
             
             const optionDiv = document.createElement('div');
@@ -364,11 +365,19 @@ function showConfirmationModal() {
 // Submit quiz
 async function submitQuiz() {
     if (isQuizSubmitted) return; // Prevent multiple submissions
-    
+    const numberToLetter = ['A', 'B', 'C', 'D'];
+    Object.keys(selectedAnswers).forEach((key) => {
+        const value = selectedAnswers[key];
+        if (typeof value === 'number' && value >= 0 && value <= 3) {
+          selectedAnswers[key] = numberToLetter[value];
+        }
+      });
     isQuizSubmitted = true;
     const token = localStorage.getItem('token');
     console.log(quizData)
-    const response = await fetch('http://localhost:3000/student/quiz', {
+    console.log(selectedAnswers);
+
+    const response = await fetch('http://localhost:8000/student/quiz', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
