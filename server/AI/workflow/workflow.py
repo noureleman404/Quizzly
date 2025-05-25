@@ -213,15 +213,15 @@ def store_quizzes(
         conn.rollback()
         print("Error storing quiz:", e)
         raise
-if __name__ == "__main__":
-    # book_id = 16
-    # start_page = 10
-    # end_page = 50
-    # quizzes = generate_quiz(book_id, start_page, end_page, num_quizzes=1 ,questionsNum=7)
-    # print_quiz(quizzes)
+# if __name__ == "__main__":
+#     # book_id = 16
+#     # start_page = 10
+#     # end_page = 50
+#     # quizzes = generate_quiz(book_id, start_page, end_page, num_quizzes=1 ,questionsNum=7)
+#     # print_quiz(quizzes)
 
-    # cursor.close()
-    # conn.close()
-    model = ChatGoogleGenerativeAI(model='gemini-1.5-flash')
-    response = model.invoke("hello")
-    print(response)
+#     # cursor.close()
+#     # conn.close()
+#     # model = ChatGoogleGenerativeAI(model='gemini-1.5-flash')
+#     # response = model.invoke("hello")
+#     # print(response)
