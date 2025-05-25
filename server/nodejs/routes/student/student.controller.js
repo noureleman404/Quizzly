@@ -200,15 +200,24 @@ const getExamQuestionsForStudent = async (req, res) => {
   
       // 5. Transform questions
       const questionsForStudent = randomVersion.questions.map((q, index) => {
-        const optionsArray = Object.values(q.options);
-        const correctAnswerIndex = Object.keys(q.options).indexOf(q.correct_answer);
-        
-        return {
-          id: index + 1,
-          text: q.question,
-          options: optionsArray,
-          correctAnswer: correctAnswerIndex
-        };
+        if (q.options && Object.keys(q.options).length > 0) {
+          const optionsArray = Object.values(q.options);
+          const optionKeys = Object.keys(q.options); // ['A', 'B', 'C', 'D']
+          const correctAnswer = optionKeys.indexOf(q.correct_answer);
+      
+          return {
+            id: index + 1,
+            text: q.question,
+            options: optionsArray,
+            correctAnswer: correctAnswer  // index (e.g., 0, 1, 2, 3)
+          };
+        } else {
+          return {
+            id: index + 1,
+            text: q.question,
+            correctAnswer: q.correct_answer // usually a text answer
+          };
+        }
       });
 
       const insertAttemptQuery = `
@@ -269,9 +278,9 @@ const submitQuizAnswers = async (req, res) => {
             const correct = quizQuestions[i].correct_answer;
             const studentAnswer = answers[i];
         
-            console.log(mapping[studentAnswer], correct, studentAnswer !== undefined && mapping[studentAnswer] === correct);
+            console.log(studentAnswer, correct, studentAnswer !== undefined && mapping[studentAnswer] === correct);
         
-            if (studentAnswer !== undefined && mapping[studentAnswer] === correct) {
+            if (studentAnswer !== undefined && studentAnswer === correct) {
                 score++;
             }
         }
@@ -406,13 +415,22 @@ const reviewQuiz = async (req, res) => {
 
     const parsedQuestions = [];
     const answersObj = student_answers;
-    const questionList = questions;
+    const mapping = { 'A': 0, 'B': 1, 'C': 2, 'D': 3 };
 
-    questionList.forEach((q, index) => {
-      const optionsArray = Object.values(q.options);
-      const correctIndex = Object.keys(q.options).indexOf(q.correct_answer);
+    questions.forEach((q, index) => {
+      let optionsArray = [];
+      let correctIndex = null;
+      let studentIndex = null;
       const studentOption = answersObj[index.toString()];
-      const studentIndex = studentOption
+
+      if (q.options && Object.keys(q.options).length > 0) {
+        optionsArray = Object.values(q.options);
+        correctIndex = Object.keys(q.options).indexOf(q.correct_answer);
+        studentIndex = mapping[studentOption];
+      } else {
+        correctIndex = q.correct_answer;
+        studentIndex = studentOption;
+      }
 
       parsedQuestions.push({
         id: index + 1,
