@@ -31,5 +31,5 @@ class ChromaDbRetriever(Retriever):
             print(f"Error during retrieval for book_id {self.book_id}: {e}")
             return []
 
-ret = ChromaDbRetriever(book_id="26")
-print(ret.retrieve(query="Deep leaning"))
+# ret = ChromaDbRetriever(book_id="26")
+# print(ret.retrieve(query="Deep leaning"))
